@@ -1,5 +1,7 @@
 package com.project.hospitalReport.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class DoctorController {
 	
 	@GetMapping("hello")
-	public String hello()
+	public void hello()
 	{
-		return "Hello Project is working";
+		ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
+		System.out.println(res);
+		
 	}
 	
 

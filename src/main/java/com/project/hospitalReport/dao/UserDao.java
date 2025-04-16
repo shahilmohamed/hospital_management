@@ -48,5 +48,18 @@ public class UserDao {
 		value.put("msg", "Account created");
 		return value;
 	}
+	
+	public User login(User user)
+	{
+		Session session = ConfigClass.getSession().openSession();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<User> query = builder.createQuery(User.class);
+		Root<User> root = query.from(User.class);
+		Predicate cond1 = builder.equal(root.get("username"), user.getUsername());
+		Predicate cond2 = builder.equal(root.get("password"), user.getPassword());
+		query.select(root).where(builder.and(cond1,cond2));
+		User result = session.createQuery(query).getSingleResultOrNull();
+		return result;
+	}
 
 }
