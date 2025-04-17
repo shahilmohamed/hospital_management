@@ -1,9 +1,13 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.dto.prescriptions;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Patient {
@@ -12,13 +16,13 @@ public class Patient {
 	private Integer id;
 	private String firstname;
 	private String lastname;
-	private String dob;
 	private String gender;
 	private String contactNumber;
-	private String email;
 	private String address;
 	private String bloodGroup;
 	private String emergencyContact;
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private List<MedicalRecord> medicalRecord;
 	public Integer getId() {
 		return id;
 	}
@@ -37,12 +41,6 @@ public class Patient {
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
 	}
-	public String getDob() {
-		return dob;
-	}
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
 	public String getGender() {
 		return gender;
 	}
@@ -54,12 +52,6 @@ public class Patient {
 	}
 	public void setContactNumber(String contactNumber) {
 		this.contactNumber = contactNumber;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
 	}
 	public String getAddress() {
 		return address;
@@ -79,6 +71,13 @@ public class Patient {
 	public void setEmergencyContact(String emergencyContact) {
 		this.emergencyContact = emergencyContact;
 	}
+	public List<MedicalRecord> getMedicalRecord() {
+		return medicalRecord;
+	}
+	public void setMedicalRecord(List<MedicalRecord> medicalRecord) {
+		this.medicalRecord = medicalRecord;
+	}
+	
 	
 
 }

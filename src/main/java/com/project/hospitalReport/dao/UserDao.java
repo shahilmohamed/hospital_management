@@ -57,7 +57,8 @@ public class UserDao {
 		Root<User> root = query.from(User.class);
 		Predicate cond1 = builder.equal(root.get("username"), user.getUsername());
 		Predicate cond2 = builder.equal(root.get("password"), user.getPassword());
-		query.select(root).where(builder.and(cond1,cond2));
+		Predicate cond3 = builder.equal(root.get("role"),user.getRole());
+		query.select(root).where(builder.and(cond1,cond2,cond3));
 		User result = session.createQuery(query).getSingleResultOrNull();
 		return result;
 	}

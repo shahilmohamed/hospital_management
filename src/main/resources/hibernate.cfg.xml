@@ -24,11 +24,10 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <!-- Mapping entities -->
-        <mapping class="com.project.hospitalReport.dto.Appointment"/>
         <mapping class="com.project.hospitalReport.dto.Doctor"/>
-        <mapping class="com.project.hospitalReport.dto.MedicalRecord"/>
-        <mapping class="com.project.hospitalReport.dto.Patient"/>
-        <mapping class="com.project.hospitalReport.dto.Prescription"/>
         <mapping class="com.project.hospitalReport.dto.User"/>
+        <mapping class="com.project.hospitalReport.dto.prescriptions.MedicalRecord"/>
+        <mapping class="com.project.hospitalReport.dto.prescriptions.Patient"/>
+        <mapping class="com.project.hospitalReport.dto.prescriptions.Prescription"/>
 	</session-factory>
 </hibernate-configuration>
