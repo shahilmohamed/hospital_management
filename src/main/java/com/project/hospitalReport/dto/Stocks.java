@@ -9,10 +9,18 @@ import jakarta.persistence.Id;
 public class Stocks {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	private String name;
 	private Long quantity;
 	private Long mrp;
 	private Long perPieceRate;
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
@@ -37,6 +45,7 @@ public class Stocks {
 	public void setPerPieceRate(Long perPieceRate) {
 		this.perPieceRate = perPieceRate;
 	}
+	
 	
 
 }

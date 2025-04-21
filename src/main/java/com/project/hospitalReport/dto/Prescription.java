@@ -17,7 +17,7 @@ public class Prescription {
     private Stocks medicineName;
     private String dosage; 
     private String frequency; 
-    private Integer durationDays; 
+    private Integer durationDays;
     @ManyToOne
     private MedicalHistory medicalHistory;
 
