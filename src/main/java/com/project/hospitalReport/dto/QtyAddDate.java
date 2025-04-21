@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto.drugs;
+package com.project.hospitalReport.dto;
 
 import java.time.LocalDate;
 
@@ -10,7 +10,7 @@ public class QtyAddDate {
 	@Id
 	private Integer id;
 	private LocalDate date;
-	private Stock stock;
+	private Stocks stocks;
 	private Long qty;
 	public Integer getId() {
 		return id;
@@ -24,11 +24,11 @@ public class QtyAddDate {
 	public void setDate(LocalDate date) {
 		this.date = date;
 	}
-	public Stock getStock() {
-		return stock;
+	public Stocks getStock() {
+		return stocks;
 	}
-	public void setStock(Stock stock) {
-		this.stock = stock;
+	public void setStock(Stocks stocks) {
+		this.stocks = stocks;
 	}
 	public Long getQty() {
 		return qty;

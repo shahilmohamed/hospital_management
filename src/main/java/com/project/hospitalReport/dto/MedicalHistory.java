@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto.prescriptions;
+package com.project.hospitalReport.dto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class MedicalRecord {
+public class MedicalHistory {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class MedicalRecord {
     private String diagnosis;
     private String notes;
 
-    @OneToMany(mappedBy = "medicalHistory", cascade = CascadeType.ALL)
+    @OneToMany
     private List<Prescription> prescriptions;
     
     private String revisitDate;

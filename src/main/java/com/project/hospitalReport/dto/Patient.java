@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto.prescriptions;
+package com.project.hospitalReport.dto;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class Patient {
 	private String bloodGroup;
 	private String emergencyContact;
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private List<MedicalRecord> medicalRecord;
+    private List<MedicalHistory> medicalHistory;
 	public Integer getId() {
 		return id;
 	}
@@ -71,11 +71,11 @@ public class Patient {
 	public void setEmergencyContact(String emergencyContact) {
 		this.emergencyContact = emergencyContact;
 	}
-	public List<MedicalRecord> getMedicalRecord() {
-		return medicalRecord;
+	public List<MedicalHistory> getMedicalRecord() {
+		return medicalHistory;
 	}
-	public void setMedicalRecord(List<MedicalRecord> medicalRecord) {
-		this.medicalRecord = medicalRecord;
+	public void setMedicalRecord(List<MedicalHistory> medicalHistory) {
+		this.medicalHistory = medicalHistory;
 	}
 	
 	
