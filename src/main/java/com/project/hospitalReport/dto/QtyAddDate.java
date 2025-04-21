@@ -4,12 +4,14 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class QtyAddDate {
 	@Id
 	private Integer id;
 	private LocalDate date;
+	@ManyToOne
 	private Stocks stocks;
 	private Long qty;
 	public Integer getId() {
