@@ -1,11 +1,14 @@
-package com.project.hospitalReport.dto.drugs;
+package com.project.hospitalReport.dto;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Stock {
+public class Stocks {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private String name;
 	private Long quantity;
 	private Long mrp;

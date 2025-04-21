@@ -1,6 +1,4 @@
-package com.project.hospitalReport.dto.prescriptions;
-
-import com.project.hospitalReport.dto.drugs.Stock;
+package com.project.hospitalReport.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,13 +14,13 @@ public class Prescription {
     private Long id;
 
 	@OneToOne
-    private Stock medicineName;
+    private Stocks medicineName;
     private String dosage; 
     private String frequency; 
     private Integer durationDays; 
-
     @ManyToOne
-    private MedicalRecord medicalRecord;
+    private MedicalHistory medicalHistory;
+
 
 	public Long getId() {
 		return id;
@@ -32,11 +30,11 @@ public class Prescription {
 		this.id = id;
 	}
 
-	public Stock getMedicineName() {
+	public Stocks getMedicineName() {
 		return medicineName;
 	}
 
-	public void setMedicineName(Stock medicineName) {
+	public void setMedicineName(Stocks medicineName) {
 		this.medicineName = medicineName;
 	}
 
@@ -68,12 +66,12 @@ public class Prescription {
 		this.durationDays = durationDays;
 	}
 
-	public MedicalRecord getMedicalRecord() {
-		return medicalRecord;
+	public MedicalHistory getMedicalHistory() {
+		return medicalHistory;
 	}
 
-	public void setMedicalRecord(MedicalRecord medicalRecord) {
-		this.medicalRecord = medicalRecord;
+	public void setMedicalHistory(MedicalHistory medicalHistory) {
+		this.medicalHistory = medicalHistory;
 	}
     
 

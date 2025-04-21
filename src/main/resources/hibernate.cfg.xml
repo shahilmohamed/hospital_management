@@ -26,8 +26,10 @@
         <!-- Mapping entities -->
         <mapping class="com.project.hospitalReport.dto.Doctor"/>
         <mapping class="com.project.hospitalReport.dto.User"/>
-        <mapping class="com.project.hospitalReport.dto.prescriptions.MedicalRecord"/>
-        <mapping class="com.project.hospitalReport.dto.prescriptions.Patient"/>
-        <mapping class="com.project.hospitalReport.dto.prescriptions.Prescription"/>
+        <mapping class="com.project.hospitalReport.dto.MedicalHistory"/>
+        <mapping class="com.project.hospitalReport.dto.Patient"/>
+        <mapping class="com.project.hospitalReport.dto.Prescription"/>
+        <mapping class="com.project.hospitalReport.dto.QtyAddDate"/>
+        <mapping class="com.project.hospitalReport.dto.Stocks"/>
 	</session-factory>
 </hibernate-configuration>
