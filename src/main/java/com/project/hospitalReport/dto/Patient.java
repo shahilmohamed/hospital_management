@@ -20,7 +20,6 @@ public class Patient {
 	private String contactNumber;
 	private String address;
 	private String bloodGroup;
-	private String emergencyContact;
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<MedicalHistory> medicalHistory;
 	public Integer getId() {
@@ -64,12 +63,6 @@ public class Patient {
 	}
 	public void setBloodGroup(String bloodGroup) {
 		this.bloodGroup = bloodGroup;
-	}
-	public String getEmergencyContact() {
-		return emergencyContact;
-	}
-	public void setEmergencyContact(String emergencyContact) {
-		this.emergencyContact = emergencyContact;
 	}
 	public List<MedicalHistory> getMedicalRecord() {
 		return medicalHistory;

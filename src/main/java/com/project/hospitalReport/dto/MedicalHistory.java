@@ -16,19 +16,14 @@ public class MedicalHistory {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    private Patient patient;
-
     private LocalDate diagnosisDate;
     private String diagnosis;
-    private String notes;
-
-    @OneToMany
-    private List<Prescription> prescriptions;
-    
     private String revisitDate;
     private String review;
+    @OneToMany(mappedBy = "medicalHistory", cascade = CascadeType.ALL)
+    private List<Prescription> prescriptions;
+    @ManyToOne
+    private Patient patient;
 
 	public Long getId() {
 		return id;
@@ -60,14 +55,6 @@ public class MedicalHistory {
 
 	public void setDiagnosis(String diagnosis) {
 		this.diagnosis = diagnosis;
-	}
-
-	public String getNotes() {
-		return notes;
-	}
-
-	public void setNotes(String notes) {
-		this.notes = notes;
 	}
 
 	public List<Prescription> getPrescriptions() {
