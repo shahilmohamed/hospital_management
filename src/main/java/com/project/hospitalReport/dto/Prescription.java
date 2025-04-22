@@ -15,8 +15,9 @@ public class Prescription {
 
 	@OneToOne
     private Stocks medicineName;
-    private String dosage; 
-    private String frequency; 
+    private String dosageMrng;
+    private String dosageAf;
+    private String dosageNight;
     private Integer durationDays;
     @ManyToOne
     private MedicalHistory medicalHistory;
@@ -42,20 +43,28 @@ public class Prescription {
 		this.durationDays = durationDays;
 	}
 
-	public String getDosage() {
-		return dosage;
+	public String getDosageMrng() {
+		return dosageMrng;
 	}
 
-	public void setDosage(String dosage) {
-		this.dosage = dosage;
+	public void setDosageMrng(String dosageMrng) {
+		this.dosageMrng = dosageMrng;
 	}
 
-	public String getFrequency() {
-		return frequency;
+	public String getDosageAf() {
+		return dosageAf;
 	}
 
-	public void setFrequency(String frequency) {
-		this.frequency = frequency;
+	public void setDosageAf(String dosageAf) {
+		this.dosageAf = dosageAf;
+	}
+
+	public String getDosageNight() {
+		return dosageNight;
+	}
+
+	public void setDosageNight(String dosageNight) {
+		this.dosageNight = dosageNight;
 	}
 
 	public int getDurationDays() {

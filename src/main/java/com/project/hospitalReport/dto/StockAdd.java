@@ -1,19 +1,22 @@
 package com.project.hospitalReport.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
-public class QtyAddDate {
+public class StockAdd {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private LocalDate date;
-	@ManyToOne
-	private Stocks stocks;
-	private Long qty;
+	@OneToMany
+	private List<Stocks> stocks;
 	public Integer getId() {
 		return id;
 	}
@@ -26,17 +29,11 @@ public class QtyAddDate {
 	public void setDate(LocalDate date) {
 		this.date = date;
 	}
-	public Stocks getStock() {
+	public List<Stocks> getStocks() {
 		return stocks;
 	}
-	public void setStock(Stocks stocks) {
+	public void setStocks(List<Stocks> stocks) {
 		this.stocks = stocks;
-	}
-	public Long getQty() {
-		return qty;
-	}
-	public void setQty(Long qty) {
-		this.qty = qty;
 	}
 	
 

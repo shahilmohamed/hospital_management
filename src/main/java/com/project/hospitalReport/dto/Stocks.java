@@ -11,10 +11,7 @@ public class Stocks {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	private Long quantity;
-	private Long mrp;
-	private Long perPieceRate;
-	
+	private Long inStock;
 	public Long getId() {
 		return id;
 	}
@@ -27,25 +24,11 @@ public class Stocks {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Long getQuantity() {
-		return quantity;
+	public Long getInStock() {
+		return inStock;
 	}
-	public void setQuantity(Long quantity) {
-		this.quantity = quantity;
+	public void setInStock(Long inStock) {
+		this.inStock = inStock;
 	}
-	public Long getMrp() {
-		return mrp;
-	}
-	public void setMrp(Long mrp) {
-		this.mrp = mrp;
-	}
-	public Long getPerPieceRate() {
-		return perPieceRate;
-	}
-	public void setPerPieceRate(Long perPieceRate) {
-		this.perPieceRate = perPieceRate;
-	}
-	
-	
 
 }
