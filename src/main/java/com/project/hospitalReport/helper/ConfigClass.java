@@ -12,6 +12,13 @@ public class ConfigClass {
 		Configuration cfg = new Configuration();
 		cfg.configure("hibernate.cfg.xml");
 		cfg.addAnnotatedClass(User.class);
+		cfg.addAnnotatedClass(Doctor.class);
+		cfg.addAnnotatedClass(Patient.class);
+		cfg.addAnnotatedClass(MedicalHistory.class);
+		cfg.addAnnotatedClass(Prescription.class);
+		cfg.addAnnotatedClass(Stocks.class);
+		cfg.addAnnotatedClass(DrugsStock.class);
+		cfg.addAnnotatedClass(StockAdd.class);
 		SessionFactory sf = cfg.buildSessionFactory();
 		return sf;
 	}
