@@ -3,6 +3,13 @@ package com.project.hospitalReport.helper;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import com.project.hospitalReport.dto.Doctor;
+import com.project.hospitalReport.dto.DrugsStock;
+import com.project.hospitalReport.dto.MedicalHistory;
+import com.project.hospitalReport.dto.Patient;
+import com.project.hospitalReport.dto.Prescription;
+import com.project.hospitalReport.dto.StockAdd;
+import com.project.hospitalReport.dto.Stocks;
 import com.project.hospitalReport.dto.User;
 
 public class ConfigClass {
