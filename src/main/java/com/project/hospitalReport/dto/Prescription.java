@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -14,12 +13,12 @@ public class Prescription {
     private Long id;
 
 	@OneToOne
-    private Stocks medicineName;
+    private Stocks stocks;
     private String dosageMrng;
     private String dosageAf;
     private String dosageNight;
     private Integer durationDays;
-    @ManyToOne
+    @OneToOne
     private MedicalHistory medicalHistory;
 
 
@@ -31,12 +30,12 @@ public class Prescription {
 		this.id = id;
 	}
 
-	public Stocks getMedicineName() {
-		return medicineName;
+	public Stocks getStocks() {
+		return stocks;
 	}
 
-	public void setMedicineName(Stocks medicineName) {
-		this.medicineName = medicineName;
+	public void setStocks(Stocks stocks) {
+		this.stocks = stocks;
 	}
 
 	public void setDurationDays(Integer durationDays) {
