@@ -10,7 +10,6 @@ import com.project.hospitalReport.dto.Patient;
 import com.project.hospitalReport.dto.Prescription;
 import com.project.hospitalReport.dto.StockAdd;
 import com.project.hospitalReport.dto.Stocks;
-import com.project.hospitalReport.dto.User;
 
 public class ConfigClass {
 	public static SessionFactory getSession()
@@ -18,7 +17,6 @@ public class ConfigClass {
 		System.out.println("In configclass");
 		Configuration cfg = new Configuration();
 		cfg.configure("hibernate.cfg.xml");
-		cfg.addAnnotatedClass(User.class);
 		cfg.addAnnotatedClass(Doctor.class);
 		cfg.addAnnotatedClass(Patient.class);
 		cfg.addAnnotatedClass(MedicalHistory.class);
