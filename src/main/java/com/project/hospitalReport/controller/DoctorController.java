@@ -10,15 +10,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.hospitalReport.dao.DoctorDao;
 import com.project.hospitalReport.dto.Doctor;
+import com.project.hospitalReport.service.ApiResponse;
+import com.project.hospitalReport.service.DoctorService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE})
 public class DoctorController {
 	
 	@Autowired
-	DoctorDao dao;
+	DoctorService doctorService;
 	
 	@GetMapping("hello")
 	public void hello()
@@ -29,9 +30,9 @@ public class DoctorController {
 	}
 	
 	@PostMapping("signup")
-	public String signup(@RequestBody Doctor doctor)
+	public ApiResponse<Doctor> signup(@RequestBody Doctor doctor)
 	{
-		String result = dao.signup(doctor);
+		ApiResponse<Doctor> result = doctorService.signup(doctor);
 		return result;
 	}
 	
