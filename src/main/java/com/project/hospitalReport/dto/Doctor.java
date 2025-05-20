@@ -1,6 +1,6 @@
 package com.project.hospitalReport.dto;
 
-import java.text.DateFormat;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 public class Doctor {
@@ -17,7 +19,8 @@ public class Doctor {
 	private Integer id;
 	private String firstname;
 	private String lastname;
-	private DateFormat dob;
+	@Temporal(TemporalType.DATE)
+	private LocalDate dob;
 	private String gender;
 	private String role;
 	private String specialization;
@@ -75,11 +78,11 @@ public class Doctor {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public DateFormat getDob() {
+	public LocalDate getDob() {
 		return dob;
 	}
 
-	public void setDob(DateFormat dob) {
+	public void setDob(LocalDate dob) {
 		this.dob = dob;
 	}
 
