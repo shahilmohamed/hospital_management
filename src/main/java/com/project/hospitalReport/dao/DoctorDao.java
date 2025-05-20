@@ -24,7 +24,7 @@ public class DoctorDao {
 		Date date = new Date();
 		d.setFirstname(doctor.getFirstname());
 		d.setLastname(doctor.getLastname());
-		d.setDob(LocalDate.of(2000, 9, 30));
+		d.setDob(doctor.getDob());
 		d.setGender(doctor.getGender());
 		d.setRole(doctor.getRole());
 		d.setSpecialization(doctor.getSpecialization());
