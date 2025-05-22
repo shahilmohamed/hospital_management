@@ -1,13 +1,14 @@
 package com.project.hospitalReport.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class MedicalHistory {
@@ -18,8 +19,8 @@ public class MedicalHistory {
     private String diagnosis;
     private String revisitDate;
     private String review;
-    @OneToOne
-    private Prescription prescriptions;
+    @OneToMany
+    private List<Prescription> prescriptions;
     @ManyToOne
     private Patient patient;
 
@@ -54,12 +55,12 @@ public class MedicalHistory {
 	public void setDiagnosis(String diagnosis) {
 		this.diagnosis = diagnosis;
 	}
-	
-	public Prescription getPrescriptions() {
+
+	public List<Prescription> getPrescriptions() {
 		return prescriptions;
 	}
 
-	public void setPrescriptions(Prescription prescriptions) {
+	public void setPrescriptions(List<Prescription> prescriptions) {
 		this.prescriptions = prescriptions;
 	}
 
