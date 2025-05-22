@@ -14,9 +14,9 @@ public class Prescription {
 
 	@OneToOne
     private Stocks stocks;
-    private String dosageMrng;
-    private String dosageAf;
-    private String dosageNight;
+    private Boolean dosageMorning;
+    private Boolean dosageAfternoon;
+    private Boolean dosageNight;
     private Integer durationDays;
     @OneToOne
     private MedicalHistory medicalHistory;
@@ -38,32 +38,32 @@ public class Prescription {
 		this.stocks = stocks;
 	}
 
-	public void setDurationDays(Integer durationDays) {
-		this.durationDays = durationDays;
+	public Boolean getDosageMorning() {
+		return dosageMorning;
 	}
 
-	public String getDosageMrng() {
-		return dosageMrng;
+	public void setDosageMorning(Boolean dosageMorning) {
+		this.dosageMorning = dosageMorning;
 	}
 
-	public void setDosageMrng(String dosageMrng) {
-		this.dosageMrng = dosageMrng;
+	public Boolean getDosageAfternoon() {
+		return dosageAfternoon;
 	}
 
-	public String getDosageAf() {
-		return dosageAf;
+	public void setDosageAfternoon(Boolean dosageAfternoon) {
+		this.dosageAfternoon = dosageAfternoon;
 	}
 
-	public void setDosageAf(String dosageAf) {
-		this.dosageAf = dosageAf;
-	}
-
-	public String getDosageNight() {
+	public Boolean getDosageNight() {
 		return dosageNight;
 	}
 
-	public void setDosageNight(String dosageNight) {
+	public void setDosageNight(Boolean dosageNight) {
 		this.dosageNight = dosageNight;
+	}
+
+	public void setDurationDays(Integer durationDays) {
+		this.durationDays = durationDays;
 	}
 
 	public int getDurationDays() {

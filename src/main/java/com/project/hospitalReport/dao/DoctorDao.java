@@ -1,6 +1,5 @@
 package com.project.hospitalReport.dao;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import org.hibernate.Session;
