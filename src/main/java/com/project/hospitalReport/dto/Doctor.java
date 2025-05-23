@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +29,7 @@ public class Doctor {
 	private String email;
 	private String phoneNumber;
 	private String password;
+	@JsonIgnore
 	@ManyToMany(mappedBy = "doctors")
 	private Set<Patient> patients = new HashSet<>();
 

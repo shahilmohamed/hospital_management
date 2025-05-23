@@ -15,26 +15,30 @@ import com.project.hospitalReport.service.ApiResponse;
 import com.project.hospitalReport.service.DoctorService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE})
+@CrossOrigin(origins = "http://localhost:4200", methods = { RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT,
+		RequestMethod.DELETE })
 public class DoctorController {
-	
+
 	@Autowired
 	DoctorService doctorService;
-	
+
 	@GetMapping("hello")
-	public void hello()
-	{
+	public void hello() {
 		ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
 		System.out.println(res);
-		
+
 	}
-	
+
 	@PostMapping("signup")
-	public ApiResponse<Doctor> signup(@RequestBody Doctor doctor)
-	{
+	public ApiResponse<Doctor> signup(@RequestBody Doctor doctor) {
 		ApiResponse<Doctor> result = doctorService.signup(doctor);
 		return result;
 	}
-	
+
+	@PostMapping("login")
+	public ApiResponse<Doctor> login(@RequestBody Doctor doctor) {
+		ApiResponse<Doctor> result = doctorService.login(doctor);
+		return result;
+	}
 
 }
