@@ -16,10 +16,10 @@ import jakarta.persistence.criteria.Root;
 
 @Repository
 public class DoctorDao {
-	
+
 	public String signup(Doctor doctor) {
 		// TODO Auto-generated method stub
-		Doctor  d = new Doctor();
+		Doctor d = new Doctor();
 		Date date = new Date();
 		d.setFirstname(doctor.getFirstname());
 		d.setLastname(doctor.getLastname());
@@ -38,8 +38,7 @@ public class DoctorDao {
 		Predicate condition = builder.equal(root.get("email"), d.getEmail());
 		query.select(root).where(condition);
 		Doctor result = session.createQuery(query).getSingleResultOrNull();
-		if(result==null)
-		{
+		if (result == null) {
 			session.save(d);
 			transaction.commit();
 			session.close();
@@ -47,7 +46,21 @@ public class DoctorDao {
 		}
 		session.close();
 		return "User present";
-		
+
+	}
+
+	public Doctor login(Doctor doctor) {
+		Session session = ConfigClass.getSession().openSession();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Doctor> query = builder.createQuery(Doctor.class);
+		Root<Doctor> root = query.from(Doctor.class);
+		Predicate condition1 = builder.equal(root.get("email"), doctor.getEmail());
+		Predicate condition2 = builder.equal(root.get("password"), doctor.getPassword());
+		query.select(root).where(builder.and(condition1, condition2));
+		Doctor result = session.createQuery(query).getSingleResultOrNull();
+		session.close();
+		return result;
+
 	}
 
 }
