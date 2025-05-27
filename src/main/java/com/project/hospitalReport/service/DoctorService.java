@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.hospitalReport.dao.DoctorDao;
 import com.project.hospitalReport.dto.Doctor;
+import com.project.hospitalReport.dto.Patient;
 
 @Service
 public class DoctorService {
@@ -41,6 +42,21 @@ public class DoctorService {
 		res.setStatus(HttpStatus.FORBIDDEN.value());
 		res.setMessage("Wrong credentials");
 		res.setData(d);
+		return res;
+	}
+	
+	public ApiResponse<Patient> addPatient(Patient p, Integer id) {
+		String msg = doctorDao.addPatient(p, id);
+		ApiResponse<Patient> res = new ApiResponse<>();
+		if (msg.equals("Patient added successfully")) {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(msg);
+			res.setData(p);
+			return res;
+		}
+		res.setStatus(HttpStatus.FORBIDDEN.value());
+		res.setMessage(msg);
+		res.setData(null);
 		return res;
 	}
 

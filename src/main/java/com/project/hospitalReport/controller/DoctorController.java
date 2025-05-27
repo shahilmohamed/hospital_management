@@ -5,12 +5,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.hospitalReport.dto.Doctor;
+import com.project.hospitalReport.dto.Patient;
 import com.project.hospitalReport.service.ApiResponse;
 import com.project.hospitalReport.service.DoctorService;
 
@@ -38,6 +40,13 @@ public class DoctorController {
 	@PostMapping("login")
 	public ApiResponse<Doctor> login(@RequestBody Doctor doctor) {
 		ApiResponse<Doctor> result = doctorService.login(doctor);
+		return result;
+	}
+	
+	@PostMapping("addPatient/{idm}")
+	public ApiResponse<Patient> addPatient(@RequestBody Patient p, @PathVariable String idm) {
+		Integer id = Integer.parseInt(idm);
+		ApiResponse<Patient> result = doctorService.addPatient(p, id);
 		return result;
 	}
 
