@@ -1,12 +1,14 @@
 package com.project.hospitalReport.dao;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import com.project.hospitalReport.dto.Doctor;
+import com.project.hospitalReport.dto.Patient;
 import com.project.hospitalReport.helper.ConfigClass;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -61,6 +63,35 @@ public class DoctorDao {
 		session.close();
 		return result;
 
+	}
+	
+	public String addPatient(Patient p, Integer id) {
+		Session session = ConfigClass.getSession().openSession();
+		Transaction transaction = session.beginTransaction();
+		try {
+			Doctor doctor = session.get(Doctor.class, id);
+			if (doctor == null) {
+				System.out.println("Doctor not found!");
+				session.close();
+				return "Doctor not found!";
+			}
+			Patient patient = new Patient();
+			patient.setFirstname(p.getFirstname());
+			patient.setLastname(p.getLastname());
+			patient.setGender(p.getGender());
+			patient.setBloodGroup(p.getBloodGroup());
+			patient.setContactNumber(p.getContactNumber());
+			patient.setAddress(p.getAddress());
+			patient.getDoctors().add(doctor);
+	        doctor.getPatients().add(patient);
+			session.persist(patient);
+			transaction.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error while adding patinen";
+		}
+		session.close();
+		return "Patient added successfully";
 	}
 
 }
