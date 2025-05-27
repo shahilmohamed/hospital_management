@@ -43,10 +43,10 @@ public class DoctorController {
 		return result;
 	}
 	
-	@PostMapping("addPatient/{idm}")
-	public ApiResponse<Patient> addPatient(@RequestBody Patient p, @PathVariable String idm) {
-		Integer id = Integer.parseInt(idm);
-		ApiResponse<Patient> result = doctorService.addPatient(p, id);
+	@PostMapping("addPatient/{id}")
+	public ApiResponse<Patient> addPatient(@RequestBody Patient p, @PathVariable String id) {
+		Integer idm = Integer.parseInt(id);
+		ApiResponse<Patient> result = doctorService.addPatient(p, idm);
 		return result;
 	}
 
