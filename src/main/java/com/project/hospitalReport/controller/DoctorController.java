@@ -1,5 +1,8 @@
 package com.project.hospitalReport.controller;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +50,14 @@ public class DoctorController {
 	public ApiResponse<Patient> addPatient(@RequestBody Patient p, @PathVariable String id) {
 		Integer idm = Integer.parseInt(id);
 		ApiResponse<Patient> result = doctorService.addPatient(p, idm);
+		return result;
+	}
+	
+	@GetMapping("getAllPatient/{id}")
+	public List<HashMap<String, Object>> getAllPatient(@PathVariable String id)
+	{
+		Integer idm = Integer.parseInt(id);
+		List<HashMap<String, Object>> result = doctorService.getAllPatient(idm);
 		return result;
 	}
 

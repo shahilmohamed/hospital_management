@@ -1,5 +1,9 @@
 package com.project.hospitalReport.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -58,6 +62,35 @@ public class DoctorService {
 		res.setMessage(msg);
 		res.setData(null);
 		return res;
+	}
+
+	public List<HashMap<String, Object>> getAllPatient(Integer id) {
+		List<Object[]> list = doctorDao.getAllPatient(id);
+		List<HashMap<String, Object>> al = new ArrayList<>();
+		for(int i = 0;i<list.size();i++)
+		{
+			HashMap<String, Object> hm = new HashMap<>();
+			Object[] arr = list.get(i);
+			for(int j=0;j<arr.length;j++)
+			{
+				if(j==0)
+					hm.put("id", arr[j]);
+				if(j==1)
+					hm.put("address", arr[j]);
+				if(j==2)
+					hm.put("bloodGroup", arr[j]);
+				if(j==3)
+					hm.put("contactNumber", arr[j]);
+				if(j==4)
+					hm.put("firstname", arr[j]);
+				if(j==5)
+					hm.put("gender", arr[j]);
+				if(j==6)
+					hm.put("lastname", arr[j]);
+			}
+			al.add(hm);
+		}
+		return al;
 	}
 
 }

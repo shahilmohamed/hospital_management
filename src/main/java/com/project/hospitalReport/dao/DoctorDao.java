@@ -1,10 +1,12 @@
 package com.project.hospitalReport.dao;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
 import org.springframework.stereotype.Repository;
 
 import com.project.hospitalReport.dto.Doctor;
@@ -92,6 +94,22 @@ public class DoctorDao {
 		}
 		session.close();
 		return "Patient added successfully";
+	}
+	
+	public List<Object[]> getAllPatient(Integer id)
+	{
+		Session session = ConfigClass.getSession().openSession();
+		session.beginTransaction();
+		String sql = "SELECT m_1.id, m_1.address, m_1.bloodGroup, m_1.contactNumber, m_1.firstname, m_1.gender, m_1.lastname "
+				+ "FROM patient_doctor m_0 "
+				+ "JOIN patient m_1 ON m_1.id = m_0.patient_id "
+				+ "WHERE m_0.doctor_id= :doctor_id";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+		query.setParameter("doctor_id", id);
+		List<Object[]> result = query.getResultList();
+		session.close();
+		
+		return result;
 	}
 
 }
