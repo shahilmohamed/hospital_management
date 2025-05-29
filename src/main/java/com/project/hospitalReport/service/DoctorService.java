@@ -64,33 +64,46 @@ public class DoctorService {
 		return res;
 	}
 
-	public List<HashMap<String, Object>> getAllPatient(Integer id) {
+	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(Integer id) {
 		List<Object[]> list = doctorDao.getAllPatient(id);
-		List<HashMap<String, Object>> al = new ArrayList<>();
-		for(int i = 0;i<list.size();i++)
-		{
-			HashMap<String, Object> hm = new HashMap<>();
-			Object[] arr = list.get(i);
-			for(int j=0;j<arr.length;j++)
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		if(list!=null){
+			List<HashMap<String, Object>> al = new ArrayList<>();
+			for(int i = 0;i<list.size();i++)
 			{
-				if(j==0)
-					hm.put("id", arr[j]);
-				if(j==1)
-					hm.put("address", arr[j]);
-				if(j==2)
-					hm.put("bloodGroup", arr[j]);
-				if(j==3)
-					hm.put("contactNumber", arr[j]);
-				if(j==4)
-					hm.put("firstname", arr[j]);
-				if(j==5)
-					hm.put("gender", arr[j]);
-				if(j==6)
-					hm.put("lastname", arr[j]);
+				HashMap<String, Object> hm = new HashMap<>();
+				Object[] arr = list.get(i);
+				for(int j=0;j<arr.length;j++)
+				{
+					if(j==0)
+						hm.put("id", arr[j]);
+					if(j==1)
+						hm.put("address", arr[j]);
+					if(j==2)
+						hm.put("bloodGroup", arr[j]);
+					if(j==3)
+						hm.put("contactNumber", arr[j]);
+					if(j==4)
+						hm.put("firstname", arr[j]);
+					if(j==5)
+						hm.put("gender", arr[j]);
+					if(j==6)
+						hm.put("lastname", arr[j]);
+				}
+				al.add(hm);
 			}
-			al.add(hm);
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Patient added successfully");
+			res.setData(al);
+			return res;
 		}
-		return al;
+		else{
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Can't insert patient");
+			res.setData(null);
+			return res;
+		}
+			
 	}
 
 }
