@@ -67,7 +67,7 @@ public class DoctorService {
 	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(Integer id) {
 		List<Object[]> list = doctorDao.getAllPatient(id);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
-		if(list!=null){
+		if(list.size()>0){
 			List<HashMap<String, Object>> al = new ArrayList<>();
 			for(int i = 0;i<list.size();i++)
 			{
@@ -93,13 +93,13 @@ public class DoctorService {
 				al.add(hm);
 			}
 			res.setStatus(HttpStatus.OK.value());
-			res.setMessage("Patient added successfully");
+			res.setMessage("Patients is fetched");
 			res.setData(al);
 			return res;
 		}
 		else{
 			res.setStatus(HttpStatus.OK.value());
-			res.setMessage("Can't insert patient");
+			res.setMessage("Can't fetch the patients");
 			res.setData(null);
 			return res;
 		}
