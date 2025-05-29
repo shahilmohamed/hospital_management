@@ -54,10 +54,10 @@ public class DoctorController {
 	}
 	
 	@GetMapping("getAllPatient/{id}")
-	public List<HashMap<String, Object>> getAllPatient(@PathVariable String id)
+	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(@PathVariable String id)
 	{
 		Integer idm = Integer.parseInt(id);
-		List<HashMap<String, Object>> result = doctorService.getAllPatient(idm);
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllPatient(idm);
 		return result;
 	}
 
