@@ -36,6 +36,7 @@ public class DoctorService {
 
 	public ApiResponse<Doctor> login(Doctor doctor) {
 		Doctor d = doctorDao.login(doctor);
+		d.setPassword("********");
 		ApiResponse<Doctor> res = new ApiResponse<>();
 		if (d != null) {
 			res.setStatus(HttpStatus.OK.value());
@@ -55,7 +56,12 @@ public class DoctorService {
 		if (msg.equals("Patient added successfully")) {
 			res.setStatus(HttpStatus.OK.value());
 			res.setMessage(msg);
-			res.setData(p);
+			res.setData(null);
+			return res;
+		} else if (msg.equals("Patient data already exist")) {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(msg);
+			res.setData(null);
 			return res;
 		}
 		res.setStatus(HttpStatus.FORBIDDEN.value());
