@@ -70,6 +70,14 @@ public class DoctorDao {
 	public String addPatient(Patient p, Integer id) {
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
+		String sql = "select * " +
+				"from hospital.patient p " +
+				"where (p.firstname = :fname or p.lastname = :lname) and (p.contactNumber = :contact);";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+		query.setParameter("fname", p.getFirstname());
+		query.setParameter("lname", p.getLastname());
+		query.setParameter("contact", p.getContactNumber());
+		List<Object[]> result = query.getResultList();
 		try {
 			Doctor doctor = session.get(Doctor.class, id);
 			if (doctor == null) {
@@ -77,17 +85,23 @@ public class DoctorDao {
 				session.close();
 				return "Doctor not found!";
 			}
-			Patient patient = new Patient();
-			patient.setFirstname(p.getFirstname());
-			patient.setLastname(p.getLastname());
-			patient.setGender(p.getGender());
-			patient.setBloodGroup(p.getBloodGroup());
-			patient.setContactNumber(p.getContactNumber());
-			patient.setAddress(p.getAddress());
-			patient.getDoctors().add(doctor);
-	        doctor.getPatients().add(patient);
-			session.persist(patient);
-			transaction.commit();
+			if (result.size()==0)
+			{
+				Patient patient = new Patient();
+				patient.setFirstname(p.getFirstname());
+				patient.setLastname(p.getLastname());
+				patient.setGender(p.getGender());
+				patient.setBloodGroup(p.getBloodGroup());
+				patient.setContactNumber(p.getContactNumber());
+				patient.setAddress(p.getAddress());
+				patient.getDoctors().add(doctor);
+				doctor.getPatients().add(patient);
+				session.persist(patient);
+				transaction.commit();
+			}
+			else {
+				return "Patient data already exist";
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Error while adding patinen";
