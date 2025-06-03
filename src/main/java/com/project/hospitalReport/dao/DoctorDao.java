@@ -92,6 +92,7 @@ public class DoctorDao {
 				patient.setLastname(p.getLastname());
 				patient.setGender(p.getGender());
 				patient.setBloodGroup(p.getBloodGroup());
+				patient.setDob(p.getDob());
 				patient.setContactNumber(p.getContactNumber());
 				patient.setAddress(p.getAddress());
 				patient.getDoctors().add(doctor);
@@ -114,7 +115,7 @@ public class DoctorDao {
 	{
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
-		String sql = "SELECT m_1.id, m_1.address, m_1.bloodGroup, m_1.contactNumber, m_1.firstname, m_1.gender, m_1.lastname "
+		String sql = "SELECT m_1.id, m_1.address, m_1.bloodGroup, m_1.contactNumber, m_1.firstname, m_1.gender, m_1.lastname, m_1.dob "
 				+ "FROM patient_doctor m_0 "
 				+ "JOIN patient m_1 ON m_1.id = m_0.patient_id "
 				+ "WHERE m_0.doctor_id= :doctor_id";
@@ -126,4 +127,12 @@ public class DoctorDao {
 		return result;
 	}
 
+	public List<Patient> searchPatient(Patient patient) {
+		Session session = ConfigClass.getSession().openSession();
+		session.beginTransaction();
+		String sql = "";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+
+		return null;
+	}
 }

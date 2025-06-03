@@ -1,18 +1,11 @@
 package com.project.hospitalReport.dto;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 @Entity
 public class Patient {
@@ -25,6 +18,8 @@ public class Patient {
 	private String contactNumber;
 	private String address;
 	private String bloodGroup;
+	@Temporal(TemporalType.DATE)
+	private Date dob;
 	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
 	private List<MedicalHistory> medicalHistory;
 	@ManyToMany
@@ -86,6 +81,10 @@ public class Patient {
 	public void setBloodGroup(String bloodGroup) {
 		this.bloodGroup = bloodGroup;
 	}
+
+	public Date getDob() { return dob; }
+
+	public void setDob(Date dob) { this.dob = dob; }
 
 	public List<MedicalHistory> getMedicalRecord() {
 		return medicalHistory;
