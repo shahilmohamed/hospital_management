@@ -127,12 +127,17 @@ public class DoctorDao {
 		return result;
 	}
 
-	public List<Patient> searchPatient(Patient patient) {
+	public List<Object[]> searchPatient(Patient patient) {
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
-		String sql = "";
+		String sql = "SELECT p.firstname, p.lastname, p.dob, p.contactNumber " +
+				"FROM patient p " +
+				"WHERE p.contactNumber = :contactNumber OR p.id = :id ;";
 		NativeQuery<Object[]> query = session.createNativeQuery(sql);
-
-		return null;
+		query.setParameter("contactNumber", patient.getContactNumber());
+		query.setParameter("id", patient.getId());
+		List<Object[]> result = query.getResultList();
+		session.close();
+		return result;
 	}
 }
