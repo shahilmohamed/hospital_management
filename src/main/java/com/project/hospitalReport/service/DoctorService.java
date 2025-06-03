@@ -95,6 +95,8 @@ public class DoctorService {
 						hm.put("gender", arr[j]);
 					if(j==6)
 						hm.put("lastname", arr[j]);
+					if(j==7)
+						hm.put("dob", arr[j]);
 				}
 				al.add(hm);
 			}
@@ -112,4 +114,8 @@ public class DoctorService {
 			
 	}
 
+	public ApiResponse<List<HashMap<String, Object>>> searchPatient(Patient patient) {
+		doctorDao.searchPatient(patient);
+		return  null;
+	}
 }

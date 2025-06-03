@@ -61,4 +61,11 @@ public class DoctorController {
 		return result;
 	}
 
+	@PostMapping("searchPatient")
+	public ApiResponse<List<HashMap<String, Object>>> searchPatient(@RequestBody Patient patient)
+	{
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.searchPatient(patient);
+		return result;
+	}
+
 }
