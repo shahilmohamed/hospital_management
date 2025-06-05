@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.project.hospitalReport.dto.Appointment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -115,7 +116,44 @@ public class DoctorService {
 	}
 
 	public ApiResponse<List<HashMap<String, Object>>> searchPatient(Patient patient) {
-		doctorDao.searchPatient(patient);
-		return  null;
+		List<Object[]> list = doctorDao.searchPatient(patient);
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		if(list.size()>0){
+			List<HashMap<String, Object>> al = new ArrayList<>();
+			for(int i = 0;i<list.size();i++)
+			{
+				HashMap<String, Object> hm = new HashMap<>();
+				Object[] arr = list.get(i);
+				for(int j=0;j<arr.length;j++)
+				{
+					if(j==0)
+						hm.put("firstname", arr[j]);
+					if(j==1)
+						hm.put("lastname", arr[j]);
+					if(j==2)
+						hm.put("dob", arr[j]);
+					if(j==3)
+						hm.put("contactNumber", arr[j]);
+				}
+				al.add(hm);
+			}
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Patients is fetched");
+			res.setData(al);
+			return res;
+		}
+		res.setStatus(HttpStatus.OK.value());
+		res.setMessage("Can't fetch the patients");
+		res.setData(null);
+		return  res;
+	}
+
+	public ApiResponse<Appointment> addAppointment(Appointment appointment) {
+		String msg = doctorDao.addAppointment(appointment);
+		ApiResponse<Appointment> res = new ApiResponse<>();
+		res.setStatus(HttpStatus.OK.value());
+		res.setMessage(msg);
+		res.setData(null);
+		return res;
 	}
 }

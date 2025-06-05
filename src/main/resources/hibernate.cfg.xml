@@ -26,6 +26,7 @@
 		<!-- Mapping entities -->
 		<mapping class="com.project.hospitalReport.dto.Doctor" />
 		<mapping class="com.project.hospitalReport.dto.Patient" />
+		<mapping class="com.project.hospitalReport.dto.Appointment" />
 		<mapping class="com.project.hospitalReport.dto.MedicalHistory" />
 		<mapping class="com.project.hospitalReport.dto.Prescription" />
 		<mapping class="com.project.hospitalReport.dto.DrugsStock" />
