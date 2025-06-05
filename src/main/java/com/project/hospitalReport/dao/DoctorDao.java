@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import com.project.hospitalReport.dto.Appointment;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
@@ -139,5 +140,20 @@ public class DoctorDao {
 		List<Object[]> result = query.getResultList();
 		session.close();
 		return result;
+	}
+
+	public String addAppointment(Appointment appointment) {
+		Appointment a = new Appointment();
+		a.setFirstname(appointment.getFirstname());
+		a.setLastname(appointment.getLastname());
+		a.setContactNumber(appointment.getContactNumber());
+		a.setDiagnosis(appointment.getDiagnosis());
+		a.setDiagnosisDate(appointment.getDiagnosisDate());
+		Session session = ConfigClass.getSession().openSession();
+		Transaction transaction = session.beginTransaction();
+		session.save(a);
+		transaction.commit();
+		session.close();
+		return "Appointment added";
 	}
 }

@@ -17,6 +17,7 @@ public class Appointment {
     private String contactNumber;
     private String diagnosis;
     private LocalDate diagnosisDate;
+    private Boolean isConsulted;
 
     public Integer getId() {
         return id;
@@ -64,5 +65,13 @@ public class Appointment {
 
     public void setDiagnosisDate(LocalDate diagnosisDate) {
         this.diagnosisDate = diagnosisDate;
+    }
+
+    public Boolean getConsulted() {
+        return isConsulted;
+    }
+
+    public void setConsulted(Boolean consulted) {
+        isConsulted = consulted;
     }
 }
