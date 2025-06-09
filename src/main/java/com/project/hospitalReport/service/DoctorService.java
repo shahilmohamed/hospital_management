@@ -134,6 +134,8 @@ public class DoctorService {
 						hm.put("dob", arr[j]);
 					if(j==3)
 						hm.put("contactNumber", arr[j]);
+					if(j==4)
+						hm.put("patient_id", arr[j]);
 				}
 				al.add(hm);
 			}
@@ -155,5 +157,9 @@ public class DoctorService {
 		res.setMessage(msg);
 		res.setData(null);
 		return res;
+	}
+
+	public ApiResponse<Appointment> getAppointment(Appointment appointment) {
+		return null;
 	}
 }

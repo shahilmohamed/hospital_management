@@ -131,7 +131,7 @@ public class DoctorDao {
 	public List<Object[]> searchPatient(Patient patient) {
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
-		String sql = "SELECT p.firstname, p.lastname, p.dob, p.contactNumber " +
+		String sql = "SELECT p.firstname, p.lastname, p.dob, p.contactNumber, p.id " +
 				"FROM patient p " +
 				"WHERE p.contactNumber = :contactNumber OR p.id = :id ;";
 		NativeQuery<Object[]> query = session.createNativeQuery(sql);
@@ -142,16 +142,18 @@ public class DoctorDao {
 		return result;
 	}
 
-	public String addAppointment(Appointment appointment) {
-		Appointment a = new Appointment();
-		a.setFirstname(appointment.getFirstname());
-		a.setLastname(appointment.getLastname());
-		a.setContactNumber(appointment.getContactNumber());
-		a.setDiagnosis(appointment.getDiagnosis());
-		a.setDiagnosisDate(appointment.getDiagnosisDate());
+	public String addAppointment(Appointment a) {
+		Appointment appointment = new Appointment();
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
-		session.save(a);
+		appointment.setFirstname(a.getFirstname());
+		appointment.setLastname(a.getLastname());
+		appointment.setContactNumber(a.getContactNumber());
+		appointment.setDiagnosis(a.getDiagnosis());
+		appointment.setDiagnosisDate(a.getDiagnosisDate());
+		appointment.setIsConsulted(a.getIsConsulted());
+		appointment.setPatient(a.getPatient());
+		session.save(appointment);
 		transaction.commit();
 		session.close();
 		return "Appointment added";
