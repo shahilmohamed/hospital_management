@@ -25,6 +25,8 @@ public class Patient {
 	@ManyToMany
 	@JoinTable(name = "patient_doctor", joinColumns = @JoinColumn(name = "patient_id"), inverseJoinColumns = @JoinColumn(name = "doctor_id"))
 	private Set<Doctor> doctors = new HashSet<>();
+	@OneToMany(mappedBy = "patient")
+	private List<Appointment> appointment;
 
 	public Integer getId() {
 		return id;
@@ -110,4 +112,11 @@ public class Patient {
 		this.doctors = doctors;
 	}
 
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
+	}
 }

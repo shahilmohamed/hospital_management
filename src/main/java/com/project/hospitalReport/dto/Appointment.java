@@ -1,9 +1,6 @@
 package com.project.hospitalReport.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -18,6 +15,9 @@ public class Appointment {
     private String diagnosis;
     private LocalDate diagnosisDate;
     private Boolean isConsulted;
+    @ManyToOne
+    @JoinTable(name = "appointment_patient", joinColumns = @JoinColumn(name = "appointment_id"), inverseJoinColumns = @JoinColumn(name = "patient_id"))
+    private Patient patient;
 
     public Integer getId() {
         return id;
@@ -67,11 +67,20 @@ public class Appointment {
         this.diagnosisDate = diagnosisDate;
     }
 
-    public Boolean getConsulted() {
+    public Boolean getIsConsulted() {
         return isConsulted;
     }
 
-    public void setConsulted(Boolean consulted) {
+    public void setIsConsulted(Boolean consulted) {
         isConsulted = consulted;
     }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
 }

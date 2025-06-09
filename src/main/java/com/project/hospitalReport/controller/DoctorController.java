@@ -76,4 +76,11 @@ public class DoctorController {
 		return result;
 	}
 
+	@PostMapping("getAppointment")
+	public ApiResponse<Appointment> getAppointment(@RequestBody Appointment appointment)
+	{
+		ApiResponse<Appointment> result = doctorService.getAppointment(appointment);
+		return result;
+	}
+
 }
