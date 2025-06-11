@@ -144,18 +144,27 @@ public class DoctorDao {
 
 	public String addAppointment(Appointment a) {
 		Appointment appointment = new Appointment();
+		Integer pid = a.getId();
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
-		appointment.setFirstname(a.getFirstname());
-		appointment.setLastname(a.getLastname());
-		appointment.setContactNumber(a.getContactNumber());
-		appointment.setDiagnosis(a.getDiagnosis());
-		appointment.setDiagnosisDate(a.getDiagnosisDate());
-		appointment.setIsConsulted(a.getIsConsulted());
-		appointment.setPatient(a.getPatient());
-		session.save(appointment);
-		transaction.commit();
-		session.close();
-		return "Appointment added";
+		try{
+			Patient patient = session.get(Patient.class,pid);
+			if (patient==null)
+				return "No patient found";
+			appointment.setFirstname(a.getFirstname());
+			appointment.setLastname(a.getLastname());
+			appointment.setContactNumber(a.getContactNumber());
+			appointment.setDiagnosis(a.getDiagnosis());
+			appointment.setDiagnosisDate(a.getDiagnosisDate());
+			appointment.setIsConsulted(a.getIsConsulted());
+			appointment.setPatient(patient);
+			session.save(appointment);
+			transaction.commit();
+			session.close();
+			return "Appointment added";
+		} catch (Exception e) {
+			return "Exception : "+e;
+		}
+
 	}
 }
