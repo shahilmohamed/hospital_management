@@ -159,7 +159,41 @@ public class DoctorService {
 		return res;
 	}
 
-	public ApiResponse<Appointment> getAppointment(Appointment appointment) {
-		return null;
+	public ApiResponse<List<HashMap<String, Object>>> getAppointment(Appointment appointment) {
+		List<Object[]> list = doctorDao.getAppointment(appointment);
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		if (list.size()>0)
+		{
+			List<HashMap<String, Object>> al = new ArrayList<>();
+			for(int i = 0;i<list.size();i++)
+			{
+				HashMap<String, Object> hm = new HashMap<>();
+				Object[] arr = list.get(i);
+				for (int j = 0;j< arr.length;j++)
+				{
+					if (j==0)
+						hm.put("id", arr[j]);
+					else if (j==1)
+						hm.put("firstname", arr[j]);
+					else if (j==2)
+						hm.put("lastname", arr[j]);
+					else if (j==3)
+						hm.put("contactNumber", arr[j]);
+					else if (j==4)
+						hm.put("diagnosis", arr[j]);
+				}
+				al.add(hm);
+			}
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Appointments found");
+			res.setData(al);
+			return res;
+		}
+		else {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("No appointments found!!!");
+			res.setMessage(null);
+			return res;
+		}
 	}
 }

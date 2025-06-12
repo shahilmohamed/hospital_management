@@ -77,9 +77,9 @@ public class DoctorController {
 	}
 
 	@PostMapping("getAppointment")
-	public ApiResponse<Appointment> getAppointment(@RequestBody Appointment appointment)
+	public ApiResponse<List<HashMap<String, Object>>> getAppointment(@RequestBody Appointment appointment)
 	{
-		ApiResponse<Appointment> result = doctorService.getAppointment(appointment);
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAppointment(appointment);
 		return result;
 	}
 
