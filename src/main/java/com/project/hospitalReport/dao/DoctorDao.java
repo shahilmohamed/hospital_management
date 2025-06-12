@@ -1,5 +1,6 @@
 package com.project.hospitalReport.dao;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -166,5 +167,19 @@ public class DoctorDao {
 			return "Exception : "+e;
 		}
 
+	}
+
+	public List<Object[]> getAppointment(Appointment appointment) {
+		Session session = ConfigClass.getSession().openSession();
+		session.beginTransaction();
+		String localDate = appointment.getDiagnosisDate().toString();
+		String sql = "SELECT a.id, a.firstname, a.lastname, a.contactNumber, a.diagnosis " +
+				"FROM appointment a " +
+				"WHERE a.diagnosisDate = :localDate";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+		query.setParameter("localDate", localDate);
+		List<Object[]> result = query.getResultList();
+		session.close();
+		return result;
 	}
 }
