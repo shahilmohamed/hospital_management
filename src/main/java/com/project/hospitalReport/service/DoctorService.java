@@ -192,7 +192,6 @@ public class DoctorService {
 		else {
 			res.setStatus(HttpStatus.OK.value());
 			res.setMessage("No appointments found!!!");
-			res.setMessage(null);
 			return res;
 		}
 	}
