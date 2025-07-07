@@ -19,7 +19,7 @@ public class MedicalHistory {
     private String diagnosis;
     private String revisitDate;
     private String review;
-    @OneToMany
+    @OneToMany(mappedBy = "medicalHistory")
     private List<Prescription> prescriptions;
     @ManyToOne
     private Patient patient;
