@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.project.hospitalReport.dto.Appointment;
+import com.project.hospitalReport.dto.DrugsStock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,6 +81,12 @@ public class DoctorController {
 	public ApiResponse<List<HashMap<String, Object>>> getAppointment(@RequestBody Appointment appointment)
 	{
 		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAppointment(appointment);
+		return result;
+	}
+
+	@PostMapping("addDrug")
+	public ApiResponse<DrugsStock> addDrug(@RequestBody DrugsStock drug) {
+		ApiResponse<DrugsStock> result = doctorService.addDrug(drug);
 		return result;
 	}
 
