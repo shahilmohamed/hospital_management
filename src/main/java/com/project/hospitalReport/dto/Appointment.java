@@ -16,7 +16,6 @@ public class Appointment {
     private LocalDate diagnosisDate;
     private Boolean isConsulted;
     @ManyToOne
-    @JoinTable(name = "appointment_patient", joinColumns = @JoinColumn(name = "appointment_id"), inverseJoinColumns = @JoinColumn(name = "patient_id"))
     private Patient patient;
 
     public Integer getId() {

@@ -173,9 +173,10 @@ public class DoctorDao {
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
 		String localDate = appointment.getDiagnosisDate().toString();
-		String sql = "SELECT a.id, a.firstname, a.lastname, a.contactNumber, a.diagnosis " +
+		String sql = "SELECT a.id, a.firstname, a.lastname, a.contactNumber, a.diagnosis, a.patient_id " +
 				"FROM appointment a " +
-				"WHERE a.diagnosisDate = :localDate";
+				"WHERE a.diagnosisDate = :localDate " +
+				"AND a.isConsulted = 0";
 		NativeQuery<Object[]> query = session.createNativeQuery(sql);
 		query.setParameter("localDate", localDate);
 		List<Object[]> result = query.getResultList();
