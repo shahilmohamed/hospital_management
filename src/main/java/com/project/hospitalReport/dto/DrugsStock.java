@@ -1,10 +1,9 @@
 package com.project.hospitalReport.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class DrugsStock {
@@ -15,8 +14,10 @@ public class DrugsStock {
 	private Long quantity;
 	private Double mrp;
 	private Double perPieceRate;
-	@OneToOne
-	private Stocks stocks;
+	private LocalDate addedDate;
+	private LocalDate updatedDate;
+	@OneToMany(mappedBy = "stock")
+	private List<DrugLog> drugLogs;
 	public Integer getId() {
 		return id;
 	}
@@ -47,12 +48,28 @@ public class DrugsStock {
 	public void setPerPieceRate(Double perPieceRate) {
 		this.perPieceRate = perPieceRate;
 	}
-	public Stocks getStocks() {
-		return stocks;
-	}
-	public void setStocks(Stocks stocks) {
-		this.stocks = stocks;
-	}
-	
 
+	public LocalDate getAddedDate() {
+		return addedDate;
+	}
+
+	public void setAddedDate(LocalDate addedDate) {
+		this.addedDate = addedDate;
+	}
+
+	public LocalDate getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(LocalDate updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	public List<DrugLog> getDrugLogs() {
+		return drugLogs;
+	}
+
+	public void setDrugLogs(List<DrugLog> drugLogs) {
+		this.drugLogs = drugLogs;
+	}
 }

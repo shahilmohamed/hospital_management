@@ -30,6 +30,6 @@
 		<mapping class="com.project.hospitalReport.dto.MedicalHistory" />
 		<mapping class="com.project.hospitalReport.dto.Prescription" />
 		<mapping class="com.project.hospitalReport.dto.DrugsStock" />
-		<mapping class="com.project.hospitalReport.dto.Stocks" />
+		<mapping class="com.project.hospitalReport.dto.DrugLog" />
 	</session-factory>
 </hibernate-configuration>
