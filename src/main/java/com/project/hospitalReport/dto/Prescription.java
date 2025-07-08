@@ -1,10 +1,6 @@
 package com.project.hospitalReport.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Prescription {
@@ -18,7 +14,7 @@ public class Prescription {
     private Boolean dosageAfternoon;
     private Boolean dosageNight;
     private Integer durationDays;
-    @OneToOne
+    @ManyToOne
     private MedicalHistory medicalHistory;
 
 

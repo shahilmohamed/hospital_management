@@ -8,7 +8,6 @@ import com.project.hospitalReport.dto.DrugsStock;
 import com.project.hospitalReport.dto.MedicalHistory;
 import com.project.hospitalReport.dto.Patient;
 import com.project.hospitalReport.dto.Prescription;
-import com.project.hospitalReport.dto.StockAdd;
 import com.project.hospitalReport.dto.Stocks;
 
 public class ConfigClass {
@@ -23,7 +22,6 @@ public class ConfigClass {
 		cfg.addAnnotatedClass(Prescription.class);
 		cfg.addAnnotatedClass(Stocks.class);
 		cfg.addAnnotatedClass(DrugsStock.class);
-		cfg.addAnnotatedClass(StockAdd.class);
 		SessionFactory sf = cfg.buildSessionFactory();
 		return sf;
 	}

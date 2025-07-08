@@ -5,14 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.project.hospitalReport.dto.Appointment;
+import com.project.hospitalReport.dto.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
 import org.springframework.stereotype.Repository;
 
-import com.project.hospitalReport.dto.Doctor;
-import com.project.hospitalReport.dto.Patient;
 import com.project.hospitalReport.helper.ConfigClass;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -26,7 +24,6 @@ public class DoctorDao {
 	public String signup(Doctor doctor) {
 		// TODO Auto-generated method stub
 		Doctor d = new Doctor();
-		Date date = new Date();
 		d.setFirstname(doctor.getFirstname());
 		d.setLastname(doctor.getLastname());
 		d.setDob(doctor.getDob());
@@ -182,5 +179,38 @@ public class DoctorDao {
 		List<Object[]> result = query.getResultList();
 		session.close();
 		return result;
+	}
+
+	public String addDrugs(DrugsStock drug) {
+		DrugsStock d = new DrugsStock();
+		Stocks s = new Stocks();
+		LocalDate today = LocalDate.now();
+		d.setName(drug.getName());
+		d.setMrp(drug.getMrp());
+		d.setQuantity(drug.getQuantity());
+		d.setPerPieceRate(drug.getPerPieceRate());
+		s.setName(drug.getName());
+		s.setInStock(drug.getQuantity());
+		s.setAddedDate(today);
+		s.setUpdatedDate(today);
+
+		Session session = ConfigClass.getSession().openSession();
+		Transaction transaction = session.beginTransaction();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<DrugsStock> query = builder.createQuery(DrugsStock.class);
+		Root<DrugsStock> root = query.from(DrugsStock.class);
+		Predicate condition = builder.equal(root.get("name"), d.getName());
+		query.select(root).where(condition);
+		DrugsStock result = session.createQuery(query).getSingleResultOrNull();
+		if (result == null) {
+			session.save(s);
+			d.setStocks(s);
+			session.save(d);
+			transaction.commit();
+			session.close();
+			return "Drug added";
+		}
+		session.close();
+		return "Drug already present";
 	}
 }

@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.LocalDate;
+
 @Entity
 public class Stocks {
 	@Id
@@ -12,6 +14,8 @@ public class Stocks {
 	private Long id;
 	private String name;
 	private Long inStock;
+	private LocalDate addedDate;
+	private LocalDate updatedDate;
 	public Long getId() {
 		return id;
 	}
@@ -31,4 +35,19 @@ public class Stocks {
 		this.inStock = inStock;
 	}
 
+	public LocalDate getAddedDate() {
+		return addedDate;
+	}
+
+	public void setAddedDate(LocalDate addedDate) {
+		this.addedDate = addedDate;
+	}
+
+	public LocalDate getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(LocalDate updatedDate) {
+		this.updatedDate = updatedDate;
+	}
 }

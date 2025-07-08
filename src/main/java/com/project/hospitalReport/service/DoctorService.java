@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.project.hospitalReport.dto.Appointment;
+import com.project.hospitalReport.dto.DrugsStock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -195,4 +196,20 @@ public class DoctorService {
 			return res;
 		}
 	}
+
+	public ApiResponse<DrugsStock> addDrug(DrugsStock drug) {
+		String s = doctorDao.addDrugs(drug);
+		ApiResponse<DrugsStock> res = new ApiResponse<>();
+		if (s.equals("Drug added")) {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(s);
+			res.setData(drug);
+			return res;
+		}
+		res.setStatus(HttpStatus.FORBIDDEN.value());
+		res.setMessage(s);
+		res.setData(drug);
+		return res;
+	}
+
 }
