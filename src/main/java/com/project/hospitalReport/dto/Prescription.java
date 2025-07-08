@@ -9,7 +9,7 @@ public class Prescription {
     private Long id;
 
 	@OneToOne
-    private Stocks stocks;
+	private DrugsStock stocks;
     private Boolean dosageMorning;
     private Boolean dosageAfternoon;
     private Boolean dosageNight;
@@ -26,11 +26,11 @@ public class Prescription {
 		this.id = id;
 	}
 
-	public Stocks getStocks() {
+	public DrugsStock getStocks() {
 		return stocks;
 	}
 
-	public void setStocks(Stocks stocks) {
+	public void setStocks(DrugsStock stocks) {
 		this.stocks = stocks;
 	}
 

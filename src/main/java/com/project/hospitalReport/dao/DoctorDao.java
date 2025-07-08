@@ -1,6 +1,7 @@
 package com.project.hospitalReport.dao;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -183,16 +184,20 @@ public class DoctorDao {
 
 	public String addDrugs(DrugsStock drug) {
 		DrugsStock d = new DrugsStock();
-		Stocks s = new Stocks();
-		LocalDate today = LocalDate.now();
+		DrugLog dl = new DrugLog();
+
 		d.setName(drug.getName());
 		d.setMrp(drug.getMrp());
 		d.setQuantity(drug.getQuantity());
 		d.setPerPieceRate(drug.getPerPieceRate());
-		s.setName(drug.getName());
-		s.setInStock(drug.getQuantity());
-		s.setAddedDate(today);
-		s.setUpdatedDate(today);
+		d.setAddedDate(drug.getAddedDate());
+		d.setUpdatedDate(drug.getUpdatedDate());
+
+		dl.setDrugName(drug.getName());
+		dl.setAddedQuantity(drug.getQuantity());
+		dl.setAvailableQuantity(drug.getQuantity());
+		dl.setUpdatedDate(drug.getUpdatedDate());
+		dl.setUpdatedTime(LocalDateTime.now());
 
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
@@ -203,9 +208,9 @@ public class DoctorDao {
 		query.select(root).where(condition);
 		DrugsStock result = session.createQuery(query).getSingleResultOrNull();
 		if (result == null) {
-			session.save(s);
-			d.setStocks(s);
 			session.save(d);
+			dl.setStock(d);
+			session.save(dl);
 			transaction.commit();
 			session.close();
 			return "Drug added";
