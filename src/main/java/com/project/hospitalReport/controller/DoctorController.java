@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -87,6 +88,25 @@ public class DoctorController {
 	@PostMapping("addDrug")
 	public ApiResponse<DrugsStock> addDrug(@RequestBody DrugsStock drug) {
 		ApiResponse<DrugsStock> result = doctorService.addDrug(drug);
+		return result;
+	}
+
+	@PutMapping("updateDrug")
+	public ApiResponse<DrugsStock> updateDrug(@RequestBody DrugsStock drug) {
+		ApiResponse<DrugsStock> result = doctorService.updateDrug(drug);
+		return result;
+	}
+
+	@GetMapping("getAllDrugs")
+	public ApiResponse<List<HashMap<String, Object>>> getAllDrugs() {
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllDrugs();
+		return result;
+	}
+
+	@GetMapping("getDrugById")
+	public ApiResponse<List<HashMap<String, Object>>> getAllDrugs(@RequestBody DrugsStock d) {
+		Integer id = d.getId();
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getDrugById(id);
 		return result;
 	}
 

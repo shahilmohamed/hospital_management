@@ -212,4 +212,89 @@ public class DoctorService {
 		return res;
 	}
 
+	public ApiResponse<DrugsStock> updateDrug(DrugsStock drug) {
+		String s = doctorDao.updateDrug(drug);
+		ApiResponse<DrugsStock> res = new ApiResponse<>();
+		if (s.equals("Drug stock is updated.")) {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(s);
+			res.setData(drug);
+			return res;
+		}
+		res.setStatus(HttpStatus.FORBIDDEN.value());
+		res.setMessage(s);
+		res.setData(drug);
+		return res;
+	}
+
+	public ApiResponse<List<HashMap<String, Object>>> getAllDrugs() {
+		List<Object[]> list = doctorDao.getAllDrugs();
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		if (list.size() > 0) {
+			List<HashMap<String, Object>> al = new ArrayList<>();
+			for (int i = 0; i < list.size(); i++) {
+				HashMap<String, Object> hm = new HashMap<>();
+				Object[] arr = list.get(i);
+				for (int j = 0; j < arr.length; j++) {
+					if (j == 0)
+						hm.put("id", arr[j]);
+					else if (j == 1)
+						hm.put("name", arr[j]);
+					else if (j == 2)
+						hm.put("mrp", arr[j]);
+					else if (j == 3)
+						hm.put("perPieceRate", arr[j]);
+					else if (j == 4)
+						hm.put("addedDate", arr[j]);
+					else if (j == 5)
+						hm.put("quantity", arr[j]);
+				}
+				al.add(hm);
+			}
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Drugs found");
+			res.setData(al);
+			return res;
+		} else {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Drug list is empty!!!");
+			return res;
+		}
+	}
+
+	public ApiResponse<List<HashMap<String, Object>>> getDrugById(Integer id) {
+		List<Object[]> list = doctorDao.getDrugById(id);
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		if (list.size() > 0) {
+			List<HashMap<String, Object>> al = new ArrayList<>();
+			for (int i = 0; i < list.size(); i++) {
+				HashMap<String, Object> hm = new HashMap<>();
+				Object[] arr = list.get(i);
+				for (int j = 0; j < arr.length; j++) {
+					if (j == 0)
+						hm.put("id", arr[j]);
+					else if (j == 1)
+						hm.put("name", arr[j]);
+					else if (j == 2)
+						hm.put("mrp", arr[j]);
+					else if (j == 3)
+						hm.put("perPieceRate", arr[j]);
+					else if (j == 4)
+						hm.put("addedDate", arr[j]);
+					else if (j == 5)
+						hm.put("quantity", arr[j]);
+				}
+				al.add(hm);
+			}
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Drug found");
+			res.setData(al);
+			return res;
+		} else {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("No Drug found!!!");
+			return res;
+		}
+	}
+
 }
