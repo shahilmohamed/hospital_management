@@ -97,4 +97,17 @@ public class DoctorController {
 		return result;
 	}
 
+	@GetMapping("getAllDrugs")
+	public ApiResponse<List<HashMap<String, Object>>> getAllDrugs() {
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllDrugs();
+		return result;
+	}
+
+	@GetMapping("getDrugById")
+	public ApiResponse<List<HashMap<String, Object>>> getAllDrugs(@RequestBody DrugsStock d) {
+		Integer id = d.getId();
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getDrugById(id);
+		return result;
+	}
+
 }

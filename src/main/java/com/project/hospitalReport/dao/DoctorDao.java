@@ -232,7 +232,6 @@ public class DoctorDao {
 			actual.setMrp(updated.getMrp());
 			actual.setPerPieceRate(updated.getPerPieceRate());
 
-			System.out.println(check);
 			if (check > 0) {
 				dl.setAddedQuantity(check);
 				dl.setSoldQuantity(0L);
@@ -247,13 +246,38 @@ public class DoctorDao {
 			dl.setUpdatedDate(updated.getUpdatedDate());
 			dl.setUpdatedTime(LocalDateTime.now());
 			session.update(actual);
+			transaction.commit();
 			dl.setStock(actual);
 			session.save(dl);
-			transaction.commit();
 			session.close();
 			return "Drug stock is updated.";
 		}
 		session.close();
 		return "Can't fetch the drug";
 	}
+
+	public List<Object[]> getAllDrugs(){
+		Session session = ConfigClass.getSession().openSession();
+		session.beginTransaction();
+		String sql = "SELECT ds.id, ds.name, ds.mrp, ds.perPieceRate, ds.addedDate, ds.quantity " +
+				"FROM drugsstock ds";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+		List<Object[]> result = query.getResultList();
+		session.close();
+		return result;
+	}
+
+	public List<Object[]> getDrugById(Integer id){
+		Session session = ConfigClass.getSession().openSession();
+		session.beginTransaction();
+		String sql = "SELECT ds.id, ds.name, ds.mrp, ds.perPieceRate, ds.addedDate, ds.quantity " +
+				"FROM drugsstock ds " +
+				"WHERE ds.id = :id";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+		query.setParameter("id", id);
+		List<Object[]> result = query.getResultList();
+		session.close();
+		return result;
+	}
+
 }
