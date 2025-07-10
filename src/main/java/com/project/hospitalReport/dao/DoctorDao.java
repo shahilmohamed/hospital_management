@@ -1,10 +1,7 @@
 package com.project.hospitalReport.dao;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import com.project.hospitalReport.dto.*;
 import org.hibernate.Session;
@@ -217,5 +214,46 @@ public class DoctorDao {
 		}
 		session.close();
 		return "Drug already present";
+	}
+
+	public String updateDrug(DrugsStock updated) {
+		Integer id = updated.getId();
+		Session session = ConfigClass.getSession().openSession();
+		Transaction transaction = session.beginTransaction();
+		DrugsStock actual = session.get(DrugsStock.class, id);
+		if (actual != null) {
+			DrugLog dl = new DrugLog();
+
+			Long check = updated.getQuantity() - actual.getQuantity();
+			Long actualQuantity = actual.getQuantity();
+			Long updatedQuantity = updated.getQuantity();
+			actual.setUpdatedDate(updated.getUpdatedDate());
+			actual.setQuantity(updated.getQuantity());
+			actual.setMrp(updated.getMrp());
+			actual.setPerPieceRate(updated.getPerPieceRate());
+
+			System.out.println(check);
+			if (check > 0) {
+				dl.setAddedQuantity(check);
+				dl.setSoldQuantity(0L);
+			} else {
+				Long positive = (check < 0) ? -check : check;
+				dl.setSoldQuantity(positive);
+				dl.setAddedQuantity(0L);
+			}
+			dl.setAvailableQuantity(updated.getQuantity());
+			dl.setDrugName(updated.getName());
+			dl.setAvailableQuantity(updated.getQuantity());
+			dl.setUpdatedDate(updated.getUpdatedDate());
+			dl.setUpdatedTime(LocalDateTime.now());
+			session.update(actual);
+			dl.setStock(actual);
+			session.save(dl);
+			transaction.commit();
+			session.close();
+			return "Drug stock is updated.";
+		}
+		session.close();
+		return "Can't fetch the drug";
 	}
 }

@@ -212,4 +212,18 @@ public class DoctorService {
 		return res;
 	}
 
+	public ApiResponse<DrugsStock> updateDrug(DrugsStock drug) {
+		String s = doctorDao.updateDrug(drug);
+		ApiResponse<DrugsStock> res = new ApiResponse<>();
+		if (s.equals("Drug stock is updated.")) {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(s);
+			res.setData(drug);
+			return res;
+		}
+		res.setStatus(HttpStatus.FORBIDDEN.value());
+		res.setMessage(s);
+		res.setData(drug);
+		return res;
+	}
 }
