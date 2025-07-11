@@ -3,7 +3,7 @@ package com.project.hospitalReport.dto;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 
 @Entity
@@ -13,7 +13,7 @@ public class DrugLog {
     private Integer id;
     private LocalDate updatedDate;
     private String drugName;
-    private LocalDateTime updatedTime;
+    private LocalTime updatedTime;
     private Long addedQuantity;
     private Long soldQuantity;
     private Long availableQuantity;
@@ -44,11 +44,11 @@ public class DrugLog {
         this.drugName = drugName;
     }
 
-    public LocalDateTime getUpdatedTime() {
+    public LocalTime getUpdatedTime() {
         return updatedTime;
     }
 
-    public void setUpdatedTime(LocalDateTime updatedTime) {
+    public void setUpdatedTime(LocalTime updatedTime) {
         this.updatedTime = updatedTime;
     }
 
