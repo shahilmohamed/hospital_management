@@ -23,8 +23,8 @@ import com.project.hospitalReport.service.ApiResponse;
 import com.project.hospitalReport.service.DoctorService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", methods = { RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT,
-		RequestMethod.DELETE })
+@CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT,
+		RequestMethod.DELETE}, allowCredentials = "true")
 public class DoctorController {
 
 	@Autowired
@@ -50,16 +50,9 @@ public class DoctorController {
 	}
 
 	@GetMapping("/logout")
-	public ResponseEntity<?> logout(HttpServletResponse response) {
-		ResponseCookie cookie = ResponseCookie.from("jwt", "")
-				.httpOnly(true)
-				.secure(true)
-				.path("/")
-				.maxAge(0)
-				.build();
-
-		response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-		return ResponseEntity.ok("Logged out");
+	public ApiResponse<?> logout(HttpServletResponse response) {
+		ApiResponse<?> result = doctorService.logout(response);
+		return result;
 	}
 	
 	@PostMapping("addPatient/{id}")

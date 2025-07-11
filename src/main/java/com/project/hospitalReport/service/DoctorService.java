@@ -63,6 +63,23 @@ public class DoctorService {
 		res.setData(d);
 		return res;
 	}
+
+	public ApiResponse<?> logout(HttpServletResponse response) {
+		Cookie nameCookie = new Cookie("name", "");
+		nameCookie.setPath("/");
+		nameCookie.setMaxAge(0); // Deletes cookie
+		nameCookie.setHttpOnly(false);
+
+		Cookie idCookie = new Cookie("id", "");
+		idCookie.setPath("/");
+		idCookie.setMaxAge(0); // Deletes cookie
+		idCookie.setHttpOnly(false);
+
+		response.addCookie(nameCookie);
+		response.addCookie(idCookie);
+
+		return new ApiResponse<>(null, "Logged out successfully", 200);
+	}
 	
 	public ApiResponse<Patient> addPatient(Patient p, Integer id) {
 		String msg = doctorDao.addPatient(p, id);
