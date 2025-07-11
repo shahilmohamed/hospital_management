@@ -281,4 +281,20 @@ public class DoctorDao {
 		return result;
 	}
 
+	public String addMedicalHistory(MedicalHistory history) {
+		MedicalHistory medicalHistory = new MedicalHistory();
+		medicalHistory.setDiagnosis(history.getDiagnosis());
+		medicalHistory.setDiagnosisDate(history.getDiagnosisDate());
+		medicalHistory.setReview(history.getReview());
+		medicalHistory.setRevisitDate(history.getRevisitDate());
+
+		Session session = ConfigClass.getSession().openSession();
+		Transaction transaction = session.beginTransaction();
+		Patient patient = session.get(Patient.class,medicalHistory.getId());
+		if (patient != null)
+		{
+			return "empty";
+		}
+		return null;
+	}
 }

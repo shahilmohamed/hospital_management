@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.project.hospitalReport.dto.Appointment;
-import com.project.hospitalReport.dto.DrugsStock;
+import com.project.hospitalReport.dto.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.project.hospitalReport.dao.DoctorDao;
-import com.project.hospitalReport.dto.Doctor;
-import com.project.hospitalReport.dto.Patient;
 
 @Service
 public class DoctorService {
@@ -36,11 +35,24 @@ public class DoctorService {
 
 	}
 
-	public ApiResponse<Doctor> login(Doctor doctor) {
+	public ApiResponse<Doctor> login(Doctor doctor, HttpServletResponse response) {
 		Doctor d = doctorDao.login(doctor);
-		d.setPassword("********");
 		ApiResponse<Doctor> res = new ApiResponse<>();
-		if (d != null) {
+		if (d != null && d.getPassword().equals(d.getPassword())) {
+			d.setPassword("********");
+			Cookie nameCookie = new Cookie("name", d.getFirstname()+"%20"+d.getLastname());
+			nameCookie.setMaxAge(24 * 60 * 60);
+			nameCookie.setPath("/");
+			nameCookie.setHttpOnly(false);
+
+			Cookie idCookie  = new Cookie("id", String.valueOf(d.getId()));
+			idCookie.setMaxAge(24 * 60 * 60);
+			idCookie.setPath("/");
+			idCookie.setHttpOnly(false);
+
+			response.addCookie(nameCookie);
+			response.addCookie(idCookie);
+
 			res.setStatus(HttpStatus.OK.value());
 			res.setMessage("Login successfully");
 			res.setData(d);
@@ -297,4 +309,18 @@ public class DoctorService {
 		}
 	}
 
+	public ApiResponse<MedicalHistory> addMedicalHistory(MedicalHistory history) {
+		String s = doctorDao.addMedicalHistory(history);
+		ApiResponse<MedicalHistory> res = new ApiResponse<>();
+		if (s.equals("")) {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(s);
+			res.setData(history);
+			return res;
+		}
+		res.setStatus(HttpStatus.FORBIDDEN.value());
+		res.setMessage(s);
+		res.setData(history);
+		return res;
+	}
 }

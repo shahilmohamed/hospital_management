@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.project.hospitalReport.dto.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +44,22 @@ public class DoctorController {
 	}
 
 	@PostMapping("login")
-	public ApiResponse<Doctor> login(@RequestBody Doctor doctor) {
-		ApiResponse<Doctor> result = doctorService.login(doctor);
+	public ApiResponse<Doctor> login(@RequestBody Doctor doctor, HttpServletResponse response) {
+		ApiResponse<Doctor> result = doctorService.login(doctor, response);
 		return result;
+	}
+
+	@GetMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletResponse response) {
+		ResponseCookie cookie = ResponseCookie.from("jwt", "")
+				.httpOnly(true)
+				.secure(true)
+				.path("/")
+				.maxAge(0)
+				.build();
+
+		response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+		return ResponseEntity.ok("Logged out");
 	}
 	
 	@PostMapping("addPatient/{id}")
@@ -106,5 +122,19 @@ public class DoctorController {
 		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getDrugById(id);
 		return result;
 	}
+
+
+	@PostMapping("addMedicalHistory")
+	public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistory history) {
+		ApiResponse<MedicalHistory> result = doctorService.addMedicalHistory(history);
+		return result;
+	}
+
+	@PostMapping("addPrescription")
+	public ApiResponse<Prescription> addPrescription(@RequestBody Prescription prescription) {
+		return null;
+	}
+
+
 
 }
