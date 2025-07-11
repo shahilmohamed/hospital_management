@@ -3,8 +3,7 @@ package com.project.hospitalReport.controller;
 import java.util.HashMap;
 import java.util.List;
 
-import com.project.hospitalReport.dto.Appointment;
-import com.project.hospitalReport.dto.DrugsStock;
+import com.project.hospitalReport.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.hospitalReport.dto.Doctor;
-import com.project.hospitalReport.dto.Patient;
 import com.project.hospitalReport.service.ApiResponse;
 import com.project.hospitalReport.service.DoctorService;
 

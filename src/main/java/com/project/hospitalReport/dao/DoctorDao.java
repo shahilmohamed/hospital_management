@@ -1,6 +1,7 @@
 package com.project.hospitalReport.dao;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import com.project.hospitalReport.dto.*;
@@ -194,7 +195,7 @@ public class DoctorDao {
 		dl.setAddedQuantity(drug.getQuantity());
 		dl.setAvailableQuantity(drug.getQuantity());
 		dl.setUpdatedDate(drug.getUpdatedDate());
-		dl.setUpdatedTime(LocalDateTime.now());
+		dl.setUpdatedTime(LocalTime.now());
 
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
@@ -244,7 +245,7 @@ public class DoctorDao {
 			dl.setDrugName(updated.getName());
 			dl.setAvailableQuantity(updated.getQuantity());
 			dl.setUpdatedDate(updated.getUpdatedDate());
-			dl.setUpdatedTime(LocalDateTime.now());
+			dl.setUpdatedTime(LocalTime.now());
 			session.update(actual);
 			transaction.commit();
 			dl.setStock(actual);
