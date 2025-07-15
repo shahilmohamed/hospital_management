@@ -1,6 +1,5 @@
 package com.project.hospitalReport.dao;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -99,7 +98,6 @@ public class DoctorDao {
 				transaction.commit();
 			}
 			else if (result.size()==1){
-				System.out.println("pid is not set!!!!!!!!!!!!!!!!!!");
 				List<Object[]> list = result;
 				Integer pid=0;
 				for (int i = 0;i< list.size();i++)
@@ -107,7 +105,6 @@ public class DoctorDao {
 					Object[] arr = list.get(i);
 					pid = Integer.parseInt(arr[i].toString());
 				}
-				System.out.println(pid);
 				String sql1 = "select pd.patient_id, pd.doctor_id " +
 						"from patient_doctor pd " +
 						"where pd.patient_id = :pid and pd.doctor_id = :did";
