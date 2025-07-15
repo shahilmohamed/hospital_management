@@ -6,13 +6,10 @@ import java.util.List;
 import com.project.hospitalReport.dto.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,19 +51,17 @@ public class DoctorController {
 		ApiResponse<?> result = doctorService.logout(response);
 		return result;
 	}
-	
-	@PostMapping("addPatient/{id}")
-	public ApiResponse<Patient> addPatient(@RequestBody Patient p, @PathVariable String id) {
-		Integer idm = Integer.parseInt(id);
-		ApiResponse<Patient> result = doctorService.addPatient(p, idm);
+
+	@PostMapping("addPatient")
+	public ApiResponse<Patient> addPatient(@RequestBody Patient p) {
+		ApiResponse<Patient> result = doctorService.addPatient(p, p.getId());
 		return result;
 	}
-	
-	@GetMapping("getAllPatient/{id}")
-	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(@PathVariable String id)
-	{
-		Integer idm = Integer.parseInt(id);
-		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllPatient(idm);
+
+	@PostMapping("getAllPatient")
+	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(@RequestBody Doctor d) {
+		Integer id = d.getId();
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllPatient(id);
 		return result;
 	}
 

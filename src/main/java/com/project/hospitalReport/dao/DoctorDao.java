@@ -1,6 +1,5 @@
 package com.project.hospitalReport.dao;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public class DoctorDao {
 	public String addPatient(Patient p, Integer id) {
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
-		String sql = "select * " +
+		String sql = "select p.id, p.firstname, p.lastname, p.gender, p.contactNumber, p.address, p.bloodGroup, p.dob " +
 				"from hospital.patient p " +
 				"where (p.firstname = :fname or p.lastname = :lname) and (p.contactNumber = :contact);";
 		NativeQuery<Object[]> query = session.createNativeQuery(sql);
@@ -98,8 +97,31 @@ public class DoctorDao {
 				session.persist(patient);
 				transaction.commit();
 			}
-			else {
-				return "Patient data already exist";
+			else if (result.size()==1){
+				List<Object[]> list = result;
+				Integer pid=0;
+				for (int i = 0;i< list.size();i++)
+				{
+					Object[] arr = list.get(i);
+					pid = Integer.parseInt(arr[i].toString());
+				}
+				String sql1 = "select pd.patient_id, pd.doctor_id " +
+						"from patient_doctor pd " +
+						"where pd.patient_id = :pid and pd.doctor_id = :did";
+				NativeQuery<Object> query1 = session.createNativeQuery(sql1);
+				query1.setParameter("pid", pid);
+				query1.setParameter("did",id);
+				List<Object> result1 = query1.getResultList();
+				if (result1.size()>0)
+					return "Patient data already exist";
+				else
+				{
+					Patient patient1 = session.get(Patient.class, pid);
+					patient1.getDoctors().add(doctor);
+					doctor.getPatients().add(patient1);
+					session.persist(patient1);
+					transaction.commit();
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -113,10 +135,10 @@ public class DoctorDao {
 	{
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
-		String sql = "SELECT m_1.id, m_1.address, m_1.bloodGroup, m_1.contactNumber, m_1.firstname, m_1.gender, m_1.lastname, m_1.dob "
-				+ "FROM patient_doctor m_0 "
-				+ "JOIN patient m_1 ON m_1.id = m_0.patient_id "
-				+ "WHERE m_0.doctor_id= :doctor_id";
+		String sql = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob "
+				+ "FROM patient_doctor pd "
+				+ "JOIN patient p ON p.id = pd.patient_id "
+				+ "WHERE pd.doctor_id= :doctor_id";
 		NativeQuery<Object[]> query = session.createNativeQuery(sql);
 		query.setParameter("doctor_id", id);
 		List<Object[]> result = query.getResultList();
