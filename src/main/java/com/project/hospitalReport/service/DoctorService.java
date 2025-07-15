@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.project.hospitalReport.dto.*;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -326,10 +327,10 @@ public class DoctorService {
 		}
 	}
 
-	public ApiResponse<MedicalHistory> addMedicalHistory(MedicalHistory history) {
-		String s = doctorDao.addMedicalHistory(history);
+	public ApiResponse<MedicalHistory> addMedicalHistory(MedicalHistory history, HttpServletRequest request) {
+		String s = doctorDao.addMedicalHistory(history, request);
 		ApiResponse<MedicalHistory> res = new ApiResponse<>();
-		if (s.equals("")) {
+		if (s.equals("Medical history added.")) {
 			res.setStatus(HttpStatus.OK.value());
 			res.setMessage(s);
 			res.setData(history);

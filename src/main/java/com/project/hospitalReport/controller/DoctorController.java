@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.project.hospitalReport.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -113,8 +114,8 @@ public class DoctorController {
 
 
 	@PostMapping("addMedicalHistory")
-	public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistory history) {
-		ApiResponse<MedicalHistory> result = doctorService.addMedicalHistory(history);
+	public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistory history, HttpServletRequest request) {
+		ApiResponse<MedicalHistory> result = doctorService.addMedicalHistory(history, request);
 		return result;
 	}
 

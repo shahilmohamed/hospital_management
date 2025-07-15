@@ -4,6 +4,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.project.hospitalReport.dto.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
@@ -248,8 +250,6 @@ public class DoctorDao {
 			DrugLog dl = new DrugLog();
 
 			Long check = updated.getQuantity() - actual.getQuantity();
-			Long actualQuantity = actual.getQuantity();
-			Long updatedQuantity = updated.getQuantity();
 			actual.setUpdatedDate(updated.getUpdatedDate());
 			actual.setQuantity(updated.getQuantity());
 			actual.setMrp(updated.getMrp());
@@ -303,20 +303,41 @@ public class DoctorDao {
 		return result;
 	}
 
-	public String addMedicalHistory(MedicalHistory history) {
-		MedicalHistory medicalHistory = new MedicalHistory();
-		medicalHistory.setDiagnosis(history.getDiagnosis());
-		medicalHistory.setDiagnosisDate(history.getDiagnosisDate());
-		medicalHistory.setReview(history.getReview());
-		medicalHistory.setRevisitDate(history.getRevisitDate());
-
+	public String addMedicalHistory(MedicalHistory history, HttpServletRequest request) {
+		String userId = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("id".equals(cookie.getName())) {
+					userId = cookie.getValue();
+				}
+			}
+		}
+		Integer doctor_id = Integer.parseInt(userId);
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
-		Patient patient = session.get(Patient.class,medicalHistory.getId());
-		if (patient != null)
-		{
-			return "empty";
+		try {
+			Patient patient = session.get(Patient.class, history.getId());
+			Doctor doctor = session.get(Doctor.class, doctor_id);
+			if (patient != null && doctor != null) {
+				MedicalHistory medicalHistory = new MedicalHistory();
+				medicalHistory.setDiagnosis(history.getDiagnosis());
+				medicalHistory.setDiagnosisDate(history.getDiagnosisDate());
+				medicalHistory.setReview(history.getReview());
+				medicalHistory.setRevisitDate(history.getRevisitDate());
+				medicalHistory.setPatient(patient);
+				medicalHistory.setDoctor(doctor);
+
+				session.save(medicalHistory);
+				transaction.commit();
+				session.close();
+				return "Medical history added.";
+			}
+		} catch (Exception e) {
+			session.close();
+			return "Exception: " + e;
 		}
-		return null;
+		session.close();
+		return "No patient found";
 	}
 }
