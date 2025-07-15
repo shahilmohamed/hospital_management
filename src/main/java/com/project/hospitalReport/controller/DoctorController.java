@@ -121,7 +121,8 @@ public class DoctorController {
 
 	@PostMapping("addPrescription")
 	public ApiResponse<Prescription> addPrescription(@RequestBody Prescription prescription) {
-		return null;
+		ApiResponse<Prescription> result = doctorService.addPrescription(prescription);
+		return result;
 	}
 
 

@@ -340,4 +340,27 @@ public class DoctorDao {
 		session.close();
 		return "No patient found";
 	}
+
+	public String addPrescription(Prescription prescription) {
+		Session session = ConfigClass.getSession().openSession();
+		Transaction transaction = session.beginTransaction();
+		MedicalHistory history = session.get(MedicalHistory.class, prescription.getMedicalHistory().getId());
+		DrugsStock stock = session.get(DrugsStock.class, prescription.getStocks().getId());
+		if (history != null && stock != null)
+		{
+			Prescription p = new Prescription();
+			p.setMedicalHistory(prescription.getMedicalHistory());
+			p.setStocks(prescription.getStocks());
+			p.setDurationDays(prescription.getDurationDays());
+			p.setDosageAfternoon(prescription.getDosageAfternoon());
+			p.setDosageMorning(prescription.getDosageMorning());
+			p.setDosageNight(prescription.getDosageNight());
+			session.save(p);
+			transaction.commit();
+			session.close();
+			return "Prescription added";
+		}
+		session.close();
+		return "Can't add prescription";
+	}
 }

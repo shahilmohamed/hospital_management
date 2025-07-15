@@ -341,4 +341,20 @@ public class DoctorService {
 		res.setData(history);
 		return res;
 	}
+
+	public ApiResponse<Prescription> addPrescription(Prescription prescription) {
+		String s = doctorDao.addPrescription(prescription);
+		ApiResponse<Prescription> res = new ApiResponse<>();
+		if (s.equals("Prescription added"))
+		{
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(s);
+			res.setData(prescription);
+			return res;
+		}
+		res.setStatus(HttpStatus.FORBIDDEN.value());
+		res.setMessage(s);
+		res.setData(prescription);
+		return res;
+	}
 }
