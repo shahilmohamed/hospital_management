@@ -2,17 +2,12 @@ package com.project.hospitalReport.dto;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 
 @Entity
 public class Doctor {
@@ -32,6 +27,8 @@ public class Doctor {
 	@JsonIgnore
 	@ManyToMany(mappedBy = "doctors")
 	private Set<Patient> patients = new HashSet<>();
+	@OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+	private List<MedicalHistory> medicalHistory;
 
 	public Integer getId() {
 		return id;
@@ -121,4 +118,11 @@ public class Doctor {
 		this.patients = patients;
 	}
 
+	public List<MedicalHistory> getMedicalHistory() {
+		return medicalHistory;
+	}
+
+	public void setMedicalHistory(List<MedicalHistory> medicalHistory) {
+		this.medicalHistory = medicalHistory;
+	}
 }
