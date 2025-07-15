@@ -54,15 +54,14 @@ public class DoctorController {
 	}
 
 	@PostMapping("addPatient")
-	public ApiResponse<Patient> addPatient(@RequestBody Patient p) {
-		ApiResponse<Patient> result = doctorService.addPatient(p, p.getId());
+	public ApiResponse<Patient> addPatient(@RequestBody Patient p, HttpServletRequest request) {
+		ApiResponse<Patient> result = doctorService.addPatient(p, request);
 		return result;
 	}
 
-	@PostMapping("getAllPatient")
-	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(@RequestBody Doctor d) {
-		Integer id = d.getId();
-		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllPatient(id);
+	@GetMapping("getAllPatient")
+	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(HttpServletRequest request) {
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllPatient(request);
 		return result;
 	}
 

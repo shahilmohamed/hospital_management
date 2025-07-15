@@ -66,7 +66,17 @@ public class DoctorDao {
 
 	}
 	
-	public String addPatient(Patient p, Integer id) {
+	public String addPatient(Patient p, HttpServletRequest request) {
+		String userId = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("id".equals(cookie.getName())) {
+					userId = cookie.getValue();
+				}
+			}
+		}
+		Integer doctor_id = Integer.parseInt(userId);
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
 		String sql = "select p.id, p.firstname, p.lastname, p.gender, p.contactNumber, p.address, p.bloodGroup, p.dob " +
@@ -78,7 +88,7 @@ public class DoctorDao {
 		query.setParameter("contact", p.getContactNumber());
 		List<Object[]> result = query.getResultList();
 		try {
-			Doctor doctor = session.get(Doctor.class, id);
+			Doctor doctor = session.get(Doctor.class, doctor_id);
 			if (doctor == null) {
 				System.out.println("Doctor not found!");
 				session.close();
@@ -112,7 +122,7 @@ public class DoctorDao {
 						"where pd.patient_id = :pid and pd.doctor_id = :did";
 				NativeQuery<Object> query1 = session.createNativeQuery(sql1);
 				query1.setParameter("pid", pid);
-				query1.setParameter("did",id);
+				query1.setParameter("did",doctor_id);
 				List<Object> result1 = query1.getResultList();
 				if (result1.size()>0)
 					return "Patient data already exist";
@@ -133,8 +143,18 @@ public class DoctorDao {
 		return "Patient added successfully";
 	}
 	
-	public List<Object[]> getAllPatient(Integer id)
+	public List<Object[]> getAllPatient(HttpServletRequest request)
 	{
+		String userId = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("id".equals(cookie.getName())) {
+					userId = cookie.getValue();
+				}
+			}
+		}
+		Integer doctor_id = Integer.parseInt(userId);
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
 		String sql = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob "
@@ -142,7 +162,7 @@ public class DoctorDao {
 				+ "JOIN patient p ON p.id = pd.patient_id "
 				+ "WHERE pd.doctor_id= :doctor_id";
 		NativeQuery<Object[]> query = session.createNativeQuery(sql);
-		query.setParameter("doctor_id", id);
+		query.setParameter("doctor_id", doctor_id);
 		List<Object[]> result = query.getResultList();
 		session.close();
 		

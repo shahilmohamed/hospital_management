@@ -82,8 +82,8 @@ public class DoctorService {
 		return new ApiResponse<>(null, "Logged out successfully", 200);
 	}
 	
-	public ApiResponse<Patient> addPatient(Patient p, Integer id) {
-		String msg = doctorDao.addPatient(p, id);
+	public ApiResponse<Patient> addPatient(Patient p, HttpServletRequest request) {
+		String msg = doctorDao.addPatient(p, request);
 		ApiResponse<Patient> res = new ApiResponse<>();
 		if (msg.equals("Patient added successfully")) {
 			res.setStatus(HttpStatus.OK.value());
@@ -102,8 +102,8 @@ public class DoctorService {
 		return res;
 	}
 
-	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(Integer id) {
-		List<Object[]> list = doctorDao.getAllPatient(id);
+	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(HttpServletRequest request) {
+		List<Object[]> list = doctorDao.getAllPatient(request);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
 		if(list.size()>0){
 			List<HashMap<String, Object>> al = new ArrayList<>();

@@ -25,9 +25,10 @@ public class Doctor {
 	private String phoneNumber;
 	private String password;
 	@JsonIgnore
-	@ManyToMany(mappedBy = "doctors")
+	@ManyToMany(mappedBy = "doctors", fetch = FetchType.LAZY)
 	private Set<Patient> patients = new HashSet<>();
-	@OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+	@JsonIgnore
+	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
 	private List<MedicalHistory> medicalHistory;
 
 	public Integer getId() {
