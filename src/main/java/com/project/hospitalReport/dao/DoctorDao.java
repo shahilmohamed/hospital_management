@@ -394,4 +394,19 @@ public class DoctorDao {
 		session.close();
 		return "Can't add prescription";
 	}
+
+	public List<Object[]> getPrescription(MedicalHistory history) {
+		Session session = ConfigClass.getSession().openSession();
+		session.beginTransaction();
+		String sql = "SELECT ds.name, ds.mrp, ds.perPieceRate, p.dosageMorning, p.dosageAfternoon, p.dosageNight,p.durationDays, m.diagnosisDate " +
+				"FROM prescription AS p " +
+				"LEFT JOIN drugsstock AS ds ON ds.id = p.stocks_id " +
+				"LEFT JOIN medicalhistory AS m ON m.id = p.medicalHistory_id " +
+				"WHERE m.id = :historyId;";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+		query.setParameter("historyId", history.getId());
+		List<Object[]> result = query.getResultList();
+		session.close();
+		return result;
+	}
 }

@@ -359,4 +359,10 @@ public class DoctorService {
 		res.setData(prescription);
 		return res;
 	}
+
+	public ApiResponse<List<HashMap<String, Object>>> getPrescription(MedicalHistory history) {
+		List<Object[]> list = doctorDao.getPrescription(history);
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		return null;
+	}
 }

@@ -124,6 +124,11 @@ public class DoctorController {
 		return result;
 	}
 
-
+	@PostMapping("getPrescription")
+	public ApiResponse<List<HashMap<String, Object>>> getPrescription(@RequestBody MedicalHistory medicalHistory)
+	{
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getPrescription(medicalHistory);
+		return result;
+	}
 
 }
