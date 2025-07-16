@@ -169,15 +169,26 @@ public class DoctorDao {
 		return result;
 	}
 
-	public List<Object[]> searchPatient(Patient patient) {
+	public List<Object[]> searchPatient(Patient patient, HttpServletRequest request) {
+		String userId = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if ("id".equals(cookie.getName())) {
+					userId = cookie.getValue();
+				}
+			}
+		}
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
-		String sql = "SELECT p.firstname, p.lastname, p.dob, p.contactNumber, p.id " +
+		String sql = "SELECT p.firstname, p.lastname, p.dob, p.contactNumber, p.id, pd.`doctor_id` " +
 				"FROM patient p " +
-				"WHERE p.contactNumber = :contactNumber OR p.id = :id ;";
+				"LEFT JOIN patient_doctor pd ON p.id = pd.`patient_id` " +
+				"WHERE (p.`contactNumber` = :contactNumber OR p.`id` = :id) AND pd.`doctor_id`= :userId;";
 		NativeQuery<Object[]> query = session.createNativeQuery(sql);
 		query.setParameter("contactNumber", patient.getContactNumber());
 		query.setParameter("id", patient.getId());
+		query.setParameter("userId", userId);
 		List<Object[]> result = query.getResultList();
 		session.close();
 		return result;

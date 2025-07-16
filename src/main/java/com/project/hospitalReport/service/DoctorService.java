@@ -146,8 +146,8 @@ public class DoctorService {
 			
 	}
 
-	public ApiResponse<List<HashMap<String, Object>>> searchPatient(Patient patient) {
-		List<Object[]> list = doctorDao.searchPatient(patient);
+	public ApiResponse<List<HashMap<String, Object>>> searchPatient(Patient patient, HttpServletRequest request) {
+		List<Object[]> list = doctorDao.searchPatient(patient, request);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
 		if(list.size()>0){
 			List<HashMap<String, Object>> al = new ArrayList<>();
@@ -167,6 +167,8 @@ public class DoctorService {
 						hm.put("contactNumber", arr[j]);
 					if(j==4)
 						hm.put("patient_id", arr[j]);
+					if (j==5)
+						hm.put("doctor_id", arr[5]);
 				}
 				al.add(hm);
 			}
