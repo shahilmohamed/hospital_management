@@ -82,8 +82,8 @@ public class DoctorService {
 		return new ApiResponse<>(null, "Logged out successfully", 200);
 	}
 	
-	public ApiResponse<Patient> addPatient(Patient p, Integer id) {
-		String msg = doctorDao.addPatient(p, id);
+	public ApiResponse<Patient> addPatient(Patient p, HttpServletRequest request) {
+		String msg = doctorDao.addPatient(p, request);
 		ApiResponse<Patient> res = new ApiResponse<>();
 		if (msg.equals("Patient added successfully")) {
 			res.setStatus(HttpStatus.OK.value());
@@ -102,8 +102,8 @@ public class DoctorService {
 		return res;
 	}
 
-	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(Integer id) {
-		List<Object[]> list = doctorDao.getAllPatient(id);
+	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(HttpServletRequest request) {
+		List<Object[]> list = doctorDao.getAllPatient(request);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
 		if(list.size()>0){
 			List<HashMap<String, Object>> al = new ArrayList<>();
@@ -146,8 +146,8 @@ public class DoctorService {
 			
 	}
 
-	public ApiResponse<List<HashMap<String, Object>>> searchPatient(Patient patient) {
-		List<Object[]> list = doctorDao.searchPatient(patient);
+	public ApiResponse<List<HashMap<String, Object>>> searchPatient(Patient patient, HttpServletRequest request) {
+		List<Object[]> list = doctorDao.searchPatient(patient, request);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
 		if(list.size()>0){
 			List<HashMap<String, Object>> al = new ArrayList<>();
@@ -167,6 +167,8 @@ public class DoctorService {
 						hm.put("contactNumber", arr[j]);
 					if(j==4)
 						hm.put("patient_id", arr[j]);
+					if (j==5)
+						hm.put("doctor_id", arr[5]);
 				}
 				al.add(hm);
 			}
@@ -340,5 +342,27 @@ public class DoctorService {
 		res.setMessage(s);
 		res.setData(history);
 		return res;
+	}
+
+	public ApiResponse<Prescription> addPrescription(Prescription prescription) {
+		String s = doctorDao.addPrescription(prescription);
+		ApiResponse<Prescription> res = new ApiResponse<>();
+		if (s.equals("Prescription added"))
+		{
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage(s);
+			res.setData(prescription);
+			return res;
+		}
+		res.setStatus(HttpStatus.FORBIDDEN.value());
+		res.setMessage(s);
+		res.setData(prescription);
+		return res;
+	}
+
+	public ApiResponse<List<HashMap<String, Object>>> getPrescription(MedicalHistory history) {
+		List<Object[]> list = doctorDao.getPrescription(history);
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		return null;
 	}
 }

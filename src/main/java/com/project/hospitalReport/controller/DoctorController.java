@@ -54,22 +54,21 @@ public class DoctorController {
 	}
 
 	@PostMapping("addPatient")
-	public ApiResponse<Patient> addPatient(@RequestBody Patient p) {
-		ApiResponse<Patient> result = doctorService.addPatient(p, p.getId());
+	public ApiResponse<Patient> addPatient(@RequestBody Patient p, HttpServletRequest request) {
+		ApiResponse<Patient> result = doctorService.addPatient(p, request);
 		return result;
 	}
 
-	@PostMapping("getAllPatient")
-	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(@RequestBody Doctor d) {
-		Integer id = d.getId();
-		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllPatient(id);
+	@GetMapping("getAllPatient")
+	public ApiResponse<List<HashMap<String, Object>>> getAllPatient(HttpServletRequest request) {
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getAllPatient(request);
 		return result;
 	}
 
 	@PostMapping("searchPatient")
-	public ApiResponse<List<HashMap<String, Object>>> searchPatient(@RequestBody Patient patient)
+	public ApiResponse<List<HashMap<String, Object>>> searchPatient(@RequestBody Patient patient, HttpServletRequest request)
 	{
-		ApiResponse<List<HashMap<String, Object>>> result = doctorService.searchPatient(patient);
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.searchPatient(patient, request);
 		return result;
 	}
 
@@ -121,9 +120,15 @@ public class DoctorController {
 
 	@PostMapping("addPrescription")
 	public ApiResponse<Prescription> addPrescription(@RequestBody Prescription prescription) {
-		return null;
+		ApiResponse<Prescription> result = doctorService.addPrescription(prescription);
+		return result;
 	}
 
-
+	@PostMapping("getPrescription")
+	public ApiResponse<List<HashMap<String, Object>>> getPrescription(@RequestBody MedicalHistory medicalHistory)
+	{
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getPrescription(medicalHistory);
+		return result;
+	}
 
 }
