@@ -409,4 +409,19 @@ public class DoctorDao {
 		session.close();
 		return result;
 	}
+
+	public List<Object[]> getMedicalHistory(Patient patient) {
+		Session session = ConfigClass.getSession().openSession();
+		session.beginTransaction();
+		String sql = "SELECT mh.`id`, mh.`diagnosis`, mh.`diagnosisDate`, mh.`review`, mh.`revisitDate`, CONCAT(p.`firstname`,' ' , p.`lastname`) AS 'Patient Name', CONCAT(d.`firstname`,' ', d.`lastname`) AS 'Doctor Name' " +
+				"FROM medicalhistory AS mh " +
+				"LEFT JOIN patient AS p ON p.`id` = mh.`patient_id` " +
+				"LEFT JOIN doctor AS d ON d.`id` = mh.`doctor_id` " +
+				"WHERE p.`id`= :patient_id;";
+		NativeQuery<Object[]> query = session.createNativeQuery(sql);
+		query.setParameter("patient_id", patient.getId());
+		List<Object[]> result = query.getResultList();
+		session.close();
+		return result;
+	}
 }

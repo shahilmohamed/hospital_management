@@ -131,4 +131,11 @@ public class DoctorController {
 		return result;
 	}
 
+	@PostMapping("getMedicalHistory")
+	public ApiResponse<List<HashMap<String, Object>>> getMedicalHistory(@RequestBody Patient patient)
+	{
+		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getMedicalHistory(patient);
+		return result;
+	}
+
 }

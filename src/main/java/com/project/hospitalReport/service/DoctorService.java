@@ -363,6 +363,76 @@ public class DoctorService {
 	public ApiResponse<List<HashMap<String, Object>>> getPrescription(MedicalHistory history) {
 		List<Object[]> list = doctorDao.getPrescription(history);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
-		return null;
+		if (list.size() > 0) {
+			List<HashMap<String, Object>> al = new ArrayList<>();
+			for (int i = 0; i < list.size(); i++) {
+				HashMap<String, Object> hm = new HashMap<>();
+				Object[] arr = list.get(i);
+				for (int j = 0; j < arr.length; j++) {
+					if (j == 0)
+						hm.put("name", arr[j]);
+					else if (j == 1)
+						hm.put("mrp", arr[j]);
+					else if (j == 2)
+						hm.put("perPieceRate", arr[j]);
+					else if (j == 3)
+						hm.put("dosageMorning", arr[j]);
+					else if (j == 4)
+						hm.put("dosageAfternoon", arr[j]);
+					else if (j == 5)
+						hm.put("dosageNight", arr[j]);
+					else if (j == 6)
+						hm.put("durationDays", arr[j]);
+					else if (j == 7)
+						hm.put("diagnosisDate", arr[j]);
+				}
+				al.add(hm);
+			}
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Prescription found");
+			res.setData(al);
+			return res;
+		} else {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("No Prescription found!!!");
+			return res;
+		}
+	}
+
+	public ApiResponse<List<HashMap<String, Object>>> getMedicalHistory(Patient patient) {
+		List<Object[]> list = doctorDao.getMedicalHistory(patient);
+		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
+		if (list.size() > 0) {
+			List<HashMap<String, Object>> al = new ArrayList<>();
+			for (int i = 0; i < list.size(); i++) {
+				HashMap<String, Object> hm = new HashMap<>();
+				Object[] arr = list.get(i);
+				for (int j = 0; j < arr.length; j++) {
+					if (j == 0)
+						hm.put("id", arr[j]);
+					else if (j == 1)
+						hm.put("diagnosis", arr[j]);
+					else if (j == 2)
+						hm.put("diagnosisDate", arr[j]);
+					else if (j == 3)
+						hm.put("review", arr[j]);
+					else if (j == 4)
+						hm.put("revisitDate", arr[j]);
+					else if (j == 5)
+						hm.put("patientName", arr[j]);
+					else if (j == 6)
+						hm.put("doctorName", arr[j]);
+				}
+				al.add(hm);
+			}
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("Medical History found");
+			res.setData(al);
+			return res;
+		} else {
+			res.setStatus(HttpStatus.OK.value());
+			res.setMessage("No Medical History found!!!");
+			return res;
+		}
 	}
 }
