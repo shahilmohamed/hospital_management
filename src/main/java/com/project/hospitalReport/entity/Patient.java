@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.entity;
 
 import java.util.Date;
 import java.util.HashSet;
