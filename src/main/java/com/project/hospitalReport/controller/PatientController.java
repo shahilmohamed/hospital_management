@@ -48,4 +48,22 @@ public class PatientController {
         }
     }
 
+    @PostMapping("add")
+    public ApiResponse<Patient> addPatient(@RequestBody Patient patient)
+    {
+        ApiResponse<Patient> response = new ApiResponse<>();
+        Patient result = service.addPatient(patient);
+        if (result!= null)
+        {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Patient data is added");
+            response.setData(result);
+            return response;
+        }
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Can't add patient date");
+        response.setData(null);
+        return response;
+    }
+
 }
