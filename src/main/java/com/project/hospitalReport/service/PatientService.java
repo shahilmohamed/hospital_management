@@ -43,4 +43,9 @@ public class PatientService {
     {
         return patientRepo.save(patient);
     }
+
+    public List<Patient> getPatientByDoctorId(Long id)
+    {
+        return patientRepo.findPatientByDoctorId(id);
+    }
 }
