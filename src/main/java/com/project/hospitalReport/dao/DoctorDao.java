@@ -3,7 +3,7 @@ package com.project.hospitalReport.dao;
 import java.time.LocalTime;
 import java.util.List;
 
-import com.project.hospitalReport.dto.*;
+import com.project.hospitalReport.entity.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.Session;

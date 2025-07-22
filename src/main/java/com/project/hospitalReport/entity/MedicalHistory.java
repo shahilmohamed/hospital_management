@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.entity;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
-@EntityScan(basePackages = "com.project.hospitalReport.dto")
+@EntityScan(basePackages = "com.project.hospitalReport.entity")
 public class HospitalReportApplication {
 	
 	public static void main(String[] args) {
