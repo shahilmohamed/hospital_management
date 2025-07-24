@@ -1,4 +1,4 @@
-package com.project.hospitalReport.service;
+package com.project.hospitalReport.dto;
 
 public class ApiResponse<T> {
 	private T data;

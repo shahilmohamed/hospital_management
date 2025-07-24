@@ -1,4 +1,4 @@
-package com.project.hospitalReport.jwtUtility;
+package com.project.hospitalReport.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -43,6 +43,6 @@ public class JwtService {
     }
     public String extractEmail(String email)
     {
-        return jwtUtil.extractEmail(email);
+        return jwtUtil.extractUsername(email);
     }
 }

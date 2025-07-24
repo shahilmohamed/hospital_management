@@ -2,7 +2,7 @@ package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.Patient;
-import com.project.hospitalReport.service.ApiResponse;
+import com.project.hospitalReport.dto.ApiResponse;
 import com.project.hospitalReport.service.DoctorServiceV2;
 import com.project.hospitalReport.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
-@RequestMapping("patients")
+@RequestMapping("/patients")
 public class PatientController {
 
     @Autowired
@@ -50,7 +50,7 @@ public class PatientController {
         }
     }
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ApiResponse<Patient> addPatient(@RequestBody Patient patient, @CookieValue(name = "id") Long doctor_id) {
         ApiResponse<Patient> response = new ApiResponse<>();
         Doctor doctor = doctorServiceV2.getById(doctor_id);
