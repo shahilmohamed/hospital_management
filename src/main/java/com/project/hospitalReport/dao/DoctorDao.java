@@ -11,7 +11,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
 import org.springframework.stereotype.Repository;
 
-import com.project.hospitalReport.helper.ConfigClass;
+import com.project.hospitalReport.configuration.ConfigClass;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

@@ -1,4 +1,4 @@
-package com.project.hospitalReport.helper;
+package com.project.hospitalReport.configuration;
 
 import com.project.hospitalReport.entity.*;
 import org.hibernate.SessionFactory;
