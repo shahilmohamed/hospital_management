@@ -48,4 +48,9 @@ public class PatientService {
     {
         return patientRepo.findPatientByDoctorId(id);
     }
+
+    public List<Patient> searchPatient(Long doctorId, Patient patient)
+    {
+        return patientRepo.searchPatient(doctorId, patient.getContactNumber(), patient.getId());
+    }
 }
