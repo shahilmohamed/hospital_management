@@ -2,6 +2,7 @@ package com.project.hospitalReport.service;
 
 import com.project.hospitalReport.repository.PatientRepo;
 import com.project.hospitalReport.entity.Patient;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,5 +53,36 @@ public class PatientService {
     public List<Patient> searchPatient(Long doctorId, Patient patient)
     {
         return patientRepo.searchPatient(doctorId, patient.getContactNumber(), patient.getId());
+    }
+
+    public String upadatePatient(Patient request)
+    {
+        Patient patient = patientRepo.getById(request.getId());
+        if (patient!=null)
+        {
+            patient.setFirstname(request.getFirstname());
+            patient.setLastname(request.getLastname());
+            patient.setAddress(request.getAddress());
+            patient.setDob(request.getDob());
+            patient.setBloodGroup(request.getBloodGroup());
+            patient.setContactNumber(request.getContactNumber());
+            patient.setGender(request.getGender());
+            patientRepo.save(patient);
+            return "Patient updated successfully!!!";
+        }
+        return "No Patients Found!!?";
+    }
+
+    public String deletePatient(Patient request)
+    {
+         Patient patient = patientRepo.getById(request.getId());
+         try
+         {
+             patient.getFirstname();
+             patientRepo.deleteById(request.getId());
+             return "Patient Deleted Successfully";
+         } catch (EntityNotFoundException e) {
+             return "Can't Find Patient To Delete";
+         }
     }
 }

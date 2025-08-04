@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 public class Patient {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	private String firstname;
 	private String lastname;
 	private String gender;
@@ -28,11 +28,11 @@ public class Patient {
 	@OneToMany(mappedBy = "patient")
 	private List<Appointment> appointment;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
