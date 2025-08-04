@@ -69,6 +69,7 @@ public class PatientController {
                 if (exists > 0) {
                     response.setStatus(HttpStatus.OK.value());
                     response.setMessage("Patient Already Added!");
+                    existing.get().setDoctors(null);
                     response.setData(existing.get());
                     return response;
                 } else {
@@ -76,6 +77,7 @@ public class PatientController {
                     response.setStatus(HttpStatus.OK.value());
                     response.setMessage("Doctor Added to Patient Successfully.");
                     patient.setId(existing.get().getId());
+                    patient.setDoctors(null);
                     response.setData(patient);
                     return response;
                 }
@@ -93,6 +95,7 @@ public class PatientController {
                 patientService.addPatient(p);
                 response.setStatus(HttpStatus.OK.value());
                 response.setMessage("Patient Added Successfully");
+                p.setDoctors(null);
                 response.setData(p);
                 return response;
             } else {
@@ -112,6 +115,38 @@ public class PatientController {
     public ApiResponse<List<Map<String, Object>>> getPatientByDoctorId(@CookieValue(value = "id") Long doctor_id)
     {
         List<Patient> patients = patientService.getPatientByDoctorId(doctor_id);
+        ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (patients.size()>0)
+        {
+            for (Patient p : patients)
+            {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("id", p.getId());
+                map.put("firstname", p.getFirstname());
+                map.put("lastname", p.getLastname());
+                map.put("address", p.getAddress());
+                map.put("bloodGroup", p.getBloodGroup());
+                map.put("contactNumber", p.getContactNumber());
+                map.put("gender", p.getGender());
+                map.put("dob", p.getDob());
+                result.add(map);
+            }
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Patients found");
+            response.setData(result);
+            return response;
+        } else {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("No Patients found!!!");
+            return response;
+        }
+    }
+
+    @PostMapping("searchPatient")
+    public ApiResponse<List<Map<String, Object>>> searchPatient(@RequestBody Patient patient, @CookieValue(value = "id") Long doctor_id)
+    {
+        List<Patient> patients = patientService.searchPatient(doctor_id, patient);
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
         List<Map<String, Object>> result = new ArrayList<>();
         if (patients.size()>0)
