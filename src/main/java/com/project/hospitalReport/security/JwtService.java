@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Date;
 
 @Service
 public class JwtService {
@@ -24,8 +25,12 @@ public class JwtService {
     }
 
     public String generateToken(String username) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime()+1000*60*60*24);
         return Jwts.builder()
                 .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
                 .signWith(getSignInKey())
                 .compact();
     }

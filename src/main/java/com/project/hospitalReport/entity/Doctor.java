@@ -15,7 +15,7 @@ import jakarta.persistence.*;
 public class Doctor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	private String firstname;
 	private String lastname;
 	@Temporal(TemporalType.DATE)
@@ -33,11 +33,11 @@ public class Doctor {
 	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
 	private List<MedicalHistory> medicalHistory;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

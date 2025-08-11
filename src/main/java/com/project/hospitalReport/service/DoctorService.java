@@ -295,7 +295,7 @@ public class DoctorService {
 		}
 	}
 
-	public ApiResponse<List<HashMap<String, Object>>> getDrugById(Integer id) {
+	public ApiResponse<List<HashMap<String, Object>>> getDrugById(Long id) {
 		List<Object[]> list = doctorDao.getDrugById(id);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
 		if (list.size() > 0) {
