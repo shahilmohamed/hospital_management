@@ -2,11 +2,17 @@ package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.ApiResponse;
 import com.project.hospitalReport.entity.Appointment;
+import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
@@ -17,9 +23,10 @@ public class AppointmentController {
     AppointmentService appointmentService;
 
     @PostMapping("/add")
-    public ApiResponse<Appointment> addAppointment(@RequestBody Appointment appointment){
+    public ApiResponse<Appointment> addAppointment(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
         ApiResponse<Appointment> response = new ApiResponse<>();
-        Patient patient = appointmentService.getById(appointment.getId());
+        Patient patient = appointmentService.getPatientById(appointment.getId());
+        Doctor doctor = appointmentService.getDoctorById(doctor_id);
         if (patient == null)
             return new ApiResponse<>(null, "No Patient Found", HttpStatus.NO_CONTENT.value());
         try {
@@ -31,15 +38,45 @@ public class AppointmentController {
             a.setDiagnosisDate(appointment.getDiagnosisDate());
             a.setIsConsulted(appointment.getIsConsulted());
             a.setPatient(patient);
-            System.out.println(a.toString());
+            a.setDoctor(doctor);
             appointmentService.addAppointment(a);
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Appointment Added Successfully");
-            response.setData(a);
+            response.setData(null);
             return response;
         } catch (Exception e) {
             return new ApiResponse<>(null, e.toString(), HttpStatus.NO_CONTENT.value());
         }
 
+    }
+
+    @PostMapping("/get")
+    public ApiResponse<List<Map<String, Object>>> getAppointments(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
+        List<Appointment> appointments = appointmentService.getAppointments(appointment.getDiagnosisDate(), doctor_id);
+        ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (appointments.size() > 0) {
+            for (Appointment a : appointments) {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("id", a.getId());
+                map.put("contactNumber", a.getContactNumber());
+                map.put("diagnosis", a.getDiagnosis());
+                map.put("diagnosisDate", a.getDiagnosisDate());
+                map.put("firstname", a.getFirstname());
+                map.put("isConsulted", a.getIsConsulted());
+                map.put("lastname", a.getLastname());
+                map.put("doctor_id", a.getDoctor().getId());
+                map.put("patient_id", a.getPatient().getId());
+                result.add(map);
+            }
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Appointments found");
+            response.setData(result);
+            return response;
+        } else {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("No Appointments found!!!");
+            return response;
+        }
     }
 }

@@ -32,6 +32,8 @@ public class Doctor {
 	@JsonIgnore
 	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
 	private List<MedicalHistory> medicalHistory;
+	@OneToMany(mappedBy = "doctor")
+	private List<Appointment> appointment;
 
 	public Long getId() {
 		return id;
@@ -127,5 +129,13 @@ public class Doctor {
 
 	public void setMedicalHistory(List<MedicalHistory> medicalHistory) {
 		this.medicalHistory = medicalHistory;
+	}
+
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
 	}
 }

@@ -17,6 +17,8 @@ public class Appointment {
     private Boolean isConsulted;
     @ManyToOne
     private Patient patient;
+    @ManyToOne
+    private Doctor doctor;
 
     public Long getId() {
         return id;
@@ -90,4 +92,11 @@ public class Appointment {
         this.patient = patient;
     }
 
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
 }
