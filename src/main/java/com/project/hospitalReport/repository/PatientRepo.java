@@ -33,6 +33,6 @@ public interface PatientRepo extends JpaRepository<Patient, Long> {
             "LEFT JOIN patient_doctor pd ON p.id = pd.patient_id " +
             "WHERE (p.contactNumber = :contactNumber OR p.id = :id) " +
             "AND pd.doctor_id= :userId;", nativeQuery = true)
-    List<Patient> searchPatient(@Param("userId") Long doctorId, @Param("contactNumber") String contactNumber, @Param("id") Integer id);
+    List<Patient> searchPatient(@Param("userId") Long doctorId, @Param("contactNumber") String contactNumber, @Param("id") Long id);
 
 }

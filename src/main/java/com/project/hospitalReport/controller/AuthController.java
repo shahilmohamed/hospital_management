@@ -46,6 +46,7 @@ public class AuthController {
         user.setPhoneNumber(request.getPhoneNumber());
         user.setGender(request.getGender());
         user.setDob(request.getDob());
+        user.setRole(request.getRole());
         user.setSpecialization(request.getSpecialization());
         userRepository.save(user);
         return new ApiResponse<>(null, "User registered successfully", HttpStatus.OK.value());

@@ -175,4 +175,32 @@ public class PatientController {
         }
     }
 
+    @PutMapping("/update")
+    public ApiResponse<String> updatePatient(@RequestBody Patient patient)
+    {
+        String result = patientService.upadatePatient(patient);
+        ApiResponse<String> response = new ApiResponse<>(null, result,HttpStatus.OK.value());
+        return response;
+    }
+
+    @DeleteMapping("/delete")
+    public ApiResponse<String> deletePatient(@RequestBody Patient patient)
+    {
+        String result = patientService.deletePatient(patient);
+        ApiResponse<String> response = new ApiResponse<>();
+        if (result.equals("Patient Deleted Successfully"))
+        {
+            response.setData(null);
+            response.setMessage(result);
+            response.setStatus(HttpStatus.OK.value());
+        }
+        else
+        {
+            response.setData(null);
+            response.setMessage(result);
+            response.setStatus(HttpStatus.NO_CONTENT.value());
+        }
+        return response;
+    }
+
 }

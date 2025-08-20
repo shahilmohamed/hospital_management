@@ -106,7 +106,7 @@ public class DoctorController {
 
 	@GetMapping("getDrugById")
 	public ApiResponse<List<HashMap<String, Object>>> getAllDrugs(@RequestBody DrugsStock d) {
-		Integer id = d.getId();
+		Long id = d.getId();
 		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getDrugById(id);
 		return result;
 	}

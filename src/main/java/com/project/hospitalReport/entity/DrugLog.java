@@ -10,7 +10,7 @@ import java.time.LocalTime;
 public class DrugLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private LocalDate updatedDate;
     private String drugName;
     private LocalTime updatedTime;
@@ -20,11 +20,11 @@ public class DrugLog {
     @ManyToOne
     private DrugsStock stock;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

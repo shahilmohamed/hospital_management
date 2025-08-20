@@ -196,7 +196,7 @@ public class DoctorDao {
 
 	public String addAppointment(Appointment a) {
 		Appointment appointment = new Appointment();
-		Integer pid = a.getId();
+		Long pid = a.getId();
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
 		try{
@@ -273,7 +273,7 @@ public class DoctorDao {
 	}
 
 	public String updateDrug(DrugsStock updated) {
-		Integer id = updated.getId();
+		Long id = updated.getId();
 		Session session = ConfigClass.getSession().openSession();
 		Transaction transaction = session.beginTransaction();
 		DrugsStock actual = session.get(DrugsStock.class, id);
@@ -321,7 +321,7 @@ public class DoctorDao {
 		return result;
 	}
 
-	public List<Object[]> getDrugById(Integer id){
+	public List<Object[]> getDrugById(Long id){
 		Session session = ConfigClass.getSession().openSession();
 		session.beginTransaction();
 		String sql = "SELECT ds.id, ds.name, ds.mrp, ds.perPieceRate, ds.addedDate, ds.quantity " +
