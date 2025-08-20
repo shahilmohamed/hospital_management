@@ -79,4 +79,42 @@ public class AppointmentController {
             return response;
         }
     }
+
+    @PostMapping("/getConsulted")
+    public ApiResponse<List<Map<String, Object>>> getConsultedAppointments(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
+        List<Appointment> appointments = appointmentService.getConsultedAppointments(appointment.getDiagnosisDate(), doctor_id);
+        ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (appointments.size() > 0) {
+            for (Appointment a : appointments) {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("id", a.getId());
+                map.put("contactNumber", a.getContactNumber());
+                map.put("diagnosis", a.getDiagnosis());
+                map.put("diagnosisDate", a.getDiagnosisDate());
+                map.put("firstname", a.getFirstname());
+                map.put("isConsulted", a.getIsConsulted());
+                map.put("lastname", a.getLastname());
+                map.put("doctor_id", a.getDoctor().getId());
+                map.put("patient_id", a.getPatient().getId());
+                result.add(map);
+            }
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Appointments found");
+            response.setData(result);
+            return response;
+        } else {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("No Appointments found!!!");
+            return response;
+        }
+    }
+
+    @PutMapping("/update")
+    public ApiResponse<String> updateAppointment(@RequestBody Appointment appointment) {
+        String result = appointmentService.updateAppointment(appointment);
+        ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.OK.value());
+        return response;
+    }
+
 }

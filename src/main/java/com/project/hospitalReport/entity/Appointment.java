@@ -28,14 +28,6 @@ public class Appointment {
         this.id = id;
     }
 
-    public Boolean getConsulted() {
-        return isConsulted;
-    }
-
-    public void setConsulted(Boolean consulted) {
-        isConsulted = consulted;
-    }
-
     public String getFirstname() {
         return firstname;
     }
