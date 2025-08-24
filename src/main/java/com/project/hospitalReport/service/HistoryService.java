@@ -9,6 +9,8 @@ import com.project.hospitalReport.repository.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class HistoryService {
 
@@ -32,4 +34,9 @@ public class HistoryService {
     public MedicalHistory addHistory(MedicalHistory history) {
         return historyRepo.save(history);
     }
+
+    public List<MedicalHistory> searchMedicalHistory(Long doctor_id, Long patient_id) {
+        return historyRepo.searchMedicalHistory(doctor_id, patient_id);
+    }
+
 }

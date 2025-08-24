@@ -74,7 +74,7 @@ public class AppointmentController {
             response.setData(result);
             return response;
         } else {
-            response.setStatus(HttpStatus.OK.value());
+            response.setStatus(HttpStatus.NO_CONTENT.value());
             response.setMessage("No Appointments found!!!");
             return response;
         }
@@ -104,7 +104,7 @@ public class AppointmentController {
             response.setData(result);
             return response;
         } else {
-            response.setStatus(HttpStatus.OK.value());
+            response.setStatus(HttpStatus.NO_CONTENT.value());
             response.setMessage("No Appointments found!!!");
             return response;
         }

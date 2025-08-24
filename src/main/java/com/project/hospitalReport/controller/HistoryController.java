@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
 @RequestMapping("/history")
@@ -35,4 +40,33 @@ public class HistoryController {
         historyService.addHistory(medicalHistory);
         return new ApiResponse<>(null, "Medical History Added", HttpStatus.OK.value());
     }
+
+    @PostMapping("/get")
+    public ApiResponse<List<Map<String, Object>>> searchMedicalHistory(@RequestBody Patient patient, @CookieValue(value = "id") Long doctor_id) {
+        List<MedicalHistory> history = historyService.searchMedicalHistory(doctor_id, patient.getId());
+        ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (history.size() > 0) {
+            for (MedicalHistory h : history) {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("id", h.getId());
+                map.put("diagnosis", h.getDiagnosis());
+                map.put("diagnosisDate", h.getDiagnosisDate());
+                map.put("review", h.getReview());
+                map.put("revisitDate", h.getRevisitDate());
+                map.put("doctor_id", h.getDoctor().getId());
+                map.put("patient_id", h.getPatient().getId());
+                result.add(map);
+            }
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Medical History Found");
+            response.setData(result);
+            return response;
+        } else {
+            response.setStatus(HttpStatus.NO_CONTENT.value());
+            response.setMessage("No Medical History Found!!!");
+            return response;
+        }
+    }
+
 }
