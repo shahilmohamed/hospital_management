@@ -1,14 +1,15 @@
 package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.ApiResponse;
-import com.project.hospitalReport.entity.Appointment;
+import com.project.hospitalReport.entity.DrugLog;
 import com.project.hospitalReport.entity.DrugsStock;
 import com.project.hospitalReport.service.DrugsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.time.LocalTime;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
@@ -31,7 +32,17 @@ public class DrugsController {
                 d.setPerPieceRate(stock.getPerPieceRate());
                 d.setQuantity(stock.getQuantity());
                 d.setUpdatedDate(stock.getUpdatedDate());
-                drugsService.addDrugs(d);
+                drugsService.addDrug(d);
+
+                DrugLog dl = new DrugLog();
+                dl.setDrugName(stock.getName());
+                dl.setAddedQuantity(stock.getQuantity());
+                dl.setAvailableQuantity(stock.getQuantity());
+                dl.setUpdatedDate(stock.getUpdatedDate());
+                dl.setUpdatedTime(LocalTime.now());
+                dl.setStock(d);
+                drugsService.addLog(dl);
+
                 response.setStatus(HttpStatus.OK.value());
                 response.setMessage("Drugs Added Successfully");
                 response.setData(null);
@@ -43,4 +54,57 @@ public class DrugsController {
             return new ApiResponse<>(null, "Drug Already Present", HttpStatus.NO_CONTENT.value());
         }
     }
+
+    @PutMapping("/update")
+    public ApiResponse<String> updateDrug(@RequestBody DrugsStock stock) {
+        String result = drugsService.updateDrug(stock);
+        if (!result.equals("Drug Updated Successfully!!!")) {
+            ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.NO_CONTENT.value());
+            return response;
+        } else {
+            ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.OK.value());
+            return response;
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ApiResponse<String> deletedrug(@RequestBody DrugsStock stock) {
+        String result = drugsService.deleteDrug(stock);
+        if (result.equals("Drug Deleted Successfully")) {
+            ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.OK.value());
+            return response;
+        } else {
+            ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.NO_CONTENT.value());
+            return response;
+        }
+    }
+
+    @GetMapping("/get")
+    public ApiResponse<List<Map<String, Object>>> getDrugs() {
+        List<DrugsStock> stocks = drugsService.get();
+        ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (stocks.size() > 0) {
+            for (DrugsStock d : stocks) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", d.getId());
+                map.put("addedDate", d.getAddedDate());
+                map.put("mrp", d.getMrp());
+                map.put("name", d.getName());
+                map.put("perPiecePrice", d.getPerPieceRate());
+                map.put("quantity", d.getQuantity());
+                map.put("updatedDate", d.getUpdatedDate());
+                result.add(map);
+            }
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Drugs Found");
+            response.setData(result);
+            return response;
+        }
+        response.setStatus(HttpStatus.NO_CONTENT.value());
+        response.setMessage("Drugs Not Found");
+        response.setData(null);
+        return response;
+    }
+
 }
