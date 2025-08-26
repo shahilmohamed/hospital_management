@@ -24,7 +24,7 @@ public class HistoryController {
 
     @PostMapping("/add")
     public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistory history, @CookieValue(value = "id") Long doctor_id) {
-        Patient patient = historyService.getPatientById(history.getId());
+        Patient patient = historyService.getPatientById(history.getPatient().getId());
         if (patient == null)
             return new ApiResponse<>(null, "No Patient Found!!!", HttpStatus.NO_CONTENT.value());
         Doctor doctor = historyService.getDoctorById(doctor_id);
