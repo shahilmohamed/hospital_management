@@ -1,6 +1,7 @@
 package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.ApiResponse;
+import com.project.hospitalReport.dto.MedicalHistoryRequest;
 import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.MedicalHistory;
 import com.project.hospitalReport.entity.Patient;
@@ -23,22 +24,18 @@ public class HistoryController {
     HistoryService historyService;
 
     @PostMapping("/add")
-    public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistory history, @CookieValue(value = "id") Long doctor_id) {
+    public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistoryRequest history, @CookieValue(value = "id") Long doctor_id) {
         Patient patient = historyService.getPatientById(history.getPatient().getId());
         if (patient == null)
             return new ApiResponse<>(null, "No Patient Found!!!", HttpStatus.NO_CONTENT.value());
         Doctor doctor = historyService.getDoctorById(doctor_id);
         if (doctor == null)
             return new ApiResponse<>(null, "No Doctor Found!!!", HttpStatus.NO_CONTENT.value());
-        MedicalHistory medicalHistory = new MedicalHistory();
-        medicalHistory.setDiagnosis(history.getDiagnosis());
-        medicalHistory.setDiagnosisDate(history.getDiagnosisDate());
-        medicalHistory.setReview(history.getReview());
-        medicalHistory.setRevisitDate(history.getRevisitDate());
-        medicalHistory.setPatient(patient);
-        medicalHistory.setDoctor(doctor);
-        historyService.addHistory(medicalHistory);
-        return new ApiResponse<>(null, "Medical History Added", HttpStatus.OK.value());
+        MedicalHistory h = historyService.addHistory(history, doctor);
+        if (h != null)
+            return new ApiResponse<>(null, "Medical History Added", HttpStatus.OK.value());
+        else
+            return new ApiResponse<>(null, "Can't Add Medical History!!!", HttpStatus.NO_CONTENT.value());
     }
 
     @PostMapping("/get")

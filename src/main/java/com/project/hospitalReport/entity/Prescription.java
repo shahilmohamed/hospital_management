@@ -58,15 +58,11 @@ public class Prescription {
 		this.dosageNight = dosageNight;
 	}
 
-	public void setDurationDays(Integer durationDays) {
-		this.durationDays = durationDays;
-	}
-
-	public int getDurationDays() {
+	public Integer getDurationDays() {
 		return durationDays;
 	}
 
-	public void setDurationDays(int durationDays) {
+	public void setDurationDays(Integer durationDays) {
 		this.durationDays = durationDays;
 	}
 
