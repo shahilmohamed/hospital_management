@@ -70,7 +70,7 @@ public class PatientController {
                     response.setStatus(HttpStatus.OK.value());
                     response.setMessage("Patient Already Added!");
                     existing.get().setDoctors(null);
-                    response.setData(existing.get());
+                    response.setData(null);
                     return response;
                 } else {
                     patientService.insertPatient(patientId, doctor_id);
@@ -78,7 +78,7 @@ public class PatientController {
                     response.setMessage("Doctor Added to Patient Successfully.");
                     patient.setId(existing.get().getId());
                     patient.setDoctors(null);
-                    response.setData(patient);
+                    response.setData(null);
                     return response;
                 }
             } else if (!existing.isPresent()) {
@@ -96,7 +96,7 @@ public class PatientController {
                 response.setStatus(HttpStatus.OK.value());
                 response.setMessage("Patient Added Successfully");
                 p.setDoctors(null);
-                response.setData(p);
+                response.setData(null);
                 return response;
             } else {
                 response.setStatus(HttpStatus.CONTINUE.value());
