@@ -39,7 +39,7 @@ public class HistoryService {
     @Transactional
     public MedicalHistory addHistory(MedicalHistoryRequest request, Doctor doctor) {
         Appointment appointment = appointmentRepo.getById(request.getAppointment_id());
-        if (appointment.getIsConsulted()) {
+        if (!appointment.getIsConsulted()) {
             MedicalHistory mh = new MedicalHistory();
             mh.setDiagnosis(request.getDiagnosis());
             mh.setReview(request.getReview());
