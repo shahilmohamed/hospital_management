@@ -31,4 +31,6 @@ public class MedicalHistoryRequest {
         private Boolean dosageNight;
         private Integer durationDays;
     }
+
+    private Long appointment_id;
 }
