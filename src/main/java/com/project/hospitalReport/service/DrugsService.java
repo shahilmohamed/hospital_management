@@ -77,8 +77,16 @@ public class DrugsService {
             return "Can't Find Drug To Delete";
         }
     }
-    public List<DrugsStock> get()
-    {
+
+    public List<DrugsStock> get() {
         return drugsRepo.findAll();
+    }
+
+    public Optional<DrugsStock> findById(Long id) {
+        return drugsRepo.findById(id);
+    }
+
+    public DrugsStock getById(Long id) {
+        return drugsRepo.getById(id);
     }
 }

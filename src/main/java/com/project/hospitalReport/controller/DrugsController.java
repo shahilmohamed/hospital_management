@@ -38,6 +38,7 @@ public class DrugsController {
                 dl.setDrugName(stock.getName());
                 dl.setAddedQuantity(stock.getQuantity());
                 dl.setAvailableQuantity(stock.getQuantity());
+                dl.setSoldQuantity(0L);
                 dl.setUpdatedDate(stock.getUpdatedDate());
                 dl.setUpdatedTime(LocalTime.now());
                 dl.setStock(d);
@@ -103,6 +104,31 @@ public class DrugsController {
         }
         response.setStatus(HttpStatus.NO_CONTENT.value());
         response.setMessage("Drugs Not Found");
+        response.setData(null);
+        return response;
+    }
+
+    @PostMapping("/getById")
+    public ApiResponse<Map<String, Object>> getById(@RequestBody DrugsStock stock) {
+        DrugsStock stocks = drugsService.getById(stock.getId());
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>();
+        if (stocks != null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", stocks.getId());
+            map.put("addedDate", stocks.getAddedDate());
+            map.put("mrp", stocks.getMrp());
+            map.put("name", stocks.getName());
+            map.put("perPiecePrice", stocks.getPerPieceRate());
+            map.put("quantity", stocks.getQuantity());
+            map.put("updatedDate", stocks.getUpdatedDate());
+
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Drug Found");
+            response.setData(map);
+            return response;
+        }
+        response.setStatus(HttpStatus.NO_CONTENT.value());
+        response.setMessage("Drug Not Found");
         response.setData(null);
         return response;
     }
