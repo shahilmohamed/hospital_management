@@ -19,13 +19,13 @@ public class AppointmentService {
     AppointmentRepo appointmentRepo;
 
     @Autowired
-    PatientRepo patientRepo;
+    PatientService patientService;
 
     @Autowired
-    DoctorRepo doctorRepo;
+    DoctorServiceV2 doctorServiceV2;
 
     public Patient getPatientById(Long id){
-        return patientRepo.getById(id);
+        return patientService.getPatientById(id);
     }
 
     public Appointment addAppointment(Appointment appointment) {
@@ -33,7 +33,7 @@ public class AppointmentService {
     }
 
     public Doctor getDoctorById(Long id) {
-        return doctorRepo.getById(id);
+        return doctorServiceV2.getById(id);
     }
 
     public List<Appointment> getAppointments(LocalDate diagnosisDate, Long doctorId) {
@@ -57,6 +57,10 @@ public class AppointmentService {
             return "Appointment Updated Successfully!!!";
         }
         return "No Appointments found!!!";
+    }
+
+    public Appointment getAppointmentById(Long id) {
+        return appointmentRepo.getById(id);
     }
 
 }

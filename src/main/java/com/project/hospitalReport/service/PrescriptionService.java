@@ -16,4 +16,8 @@ public class PrescriptionService {
     public List<Prescription> getPrescription(Long medicalHistoryId) {
         return prescriptionRepo.getPrescription(medicalHistoryId);
     }
+
+    public List<Prescription> saveAllPrescription(List<Prescription> prescriptions) {
+        return prescriptionRepo.saveAll(prescriptions);
+    }
 }

@@ -89,4 +89,8 @@ public class DrugsService {
     public DrugsStock getById(Long id) {
         return drugsRepo.getById(id);
     }
+
+    public List<DrugsStock> getParticularDrugs(List<Long> ids) {
+        return drugsRepo.findAllById(ids);
+    }
 }
