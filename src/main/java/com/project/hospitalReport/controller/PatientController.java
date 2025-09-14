@@ -203,4 +203,30 @@ public class PatientController {
         return response;
     }
 
+    @GetMapping("/getPatientById/{id}")
+    public ApiResponse<Map<String, Object>> particularPatient(@PathVariable Long id) {
+        Patient p = patientService.getPatientById(id);
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>();
+        if (p != null) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("id", p.getId());
+            map.put("firstname", p.getFirstname());
+            map.put("lastname", p.getLastname());
+            map.put("address", p.getAddress());
+            map.put("bloodGroup", p.getBloodGroup());
+            map.put("contactNumber", p.getContactNumber());
+            map.put("gender", p.getGender());
+            map.put("dob", p.getDob());
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Patients found");
+            response.setData(map);
+            return response;
+        } else {
+            response.setStatus(HttpStatus.NO_CONTENT.value());
+            response.setMessage("No Patients found!!!");
+            response.setData(null);
+            return response;
+        }
+    }
+
 }
