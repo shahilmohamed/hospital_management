@@ -17,28 +17,28 @@ public class HistoryService {
     HistoryRepo historyRepo;
 
     @Autowired
-    PatientRepo patientRepo;
+    PatientService patientService;
 
     @Autowired
-    DoctorRepo doctorRepo;
+    DoctorServiceV2 doctorServiceV2;
 
     @Autowired
-    PrescriptionRepo prescriptionRepo;
+    PrescriptionService prescriptionService;
 
     @Autowired
-    AppointmentRepo appointmentRepo;
+    AppointmentService appointmentService;
 
     public Patient getPatientById(Long id) {
-        return patientRepo.getById(id);
+        return patientService.getPatientById(id);
     }
 
     public Doctor getDoctorById(Long id) {
-        return doctorRepo.getById(id);
+        return doctorServiceV2.getById(id);
     }
 
     @Transactional
     public MedicalHistory addHistory(MedicalHistoryRequest request, Doctor doctor) {
-        Appointment appointment = appointmentRepo.getById(request.getAppointment_id());
+        Appointment appointment = appointmentService.getAppointmentById(request.getAppointment_id());
         if (!appointment.getIsConsulted()) {
             MedicalHistory mh = new MedicalHistory();
             mh.setDiagnosis(request.getDiagnosis());
@@ -60,14 +60,13 @@ public class HistoryService {
                 prescription.setDurationDays(med.getDurationDays());
                 return prescription;
             }).collect(Collectors.toList());
-            prescriptionRepo.saveAll(medicines);
+            prescriptionService.saveAllPrescription(medicines);
 
             appointment.setIsConsulted(true);
-            appointmentRepo.save(appointment);
+            appointmentService.addAppointment(appointment);
 
             return savedHistory;
-        }
-        else {
+        } else {
             return null;
         }
     }
