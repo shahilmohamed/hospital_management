@@ -19,7 +19,7 @@ public class DrugsController {
     @Autowired
     DrugsService drugsService;
 
-    @PostMapping("/add")
+    @PostMapping("/addDrug")
     public ApiResponse<DrugsStock> addDrugs(@RequestBody DrugsStock stock) {
         Optional<DrugsStock> drugs = drugsService.findByName(stock);
         if (drugs.isEmpty()) {
@@ -56,7 +56,7 @@ public class DrugsController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping("/updateDrug")
     public ApiResponse<String> updateDrug(@RequestBody DrugsStock stock) {
         String result = drugsService.updateDrug(stock);
         if (!result.equals("Drug Updated Successfully!!!")) {
@@ -80,7 +80,7 @@ public class DrugsController {
         }
     }
 
-    @GetMapping("/get")
+    @GetMapping("/getDrugs")
     public ApiResponse<List<Map<String, Object>>> getDrugs() {
         List<DrugsStock> stocks = drugsService.get();
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
@@ -108,7 +108,7 @@ public class DrugsController {
         return response;
     }
 
-    @PostMapping("/getById")
+    @PostMapping("/getDrugById")
     public ApiResponse<Map<String, Object>> getById(@RequestBody DrugsStock stock) {
         DrugsStock stocks = drugsService.getById(stock.getId());
         ApiResponse<Map<String, Object>> response = new ApiResponse<>();

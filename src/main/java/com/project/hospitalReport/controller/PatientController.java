@@ -50,7 +50,7 @@ public class PatientController {
         }
     }
 
-    @PostMapping("/add")
+    @PostMapping("/addPatient")
     public ApiResponse<Patient> addPatient(@RequestBody Patient patient, @CookieValue(name = "id") Long doctor_id) {
         ApiResponse<Patient> response = new ApiResponse<>();
         Doctor doctor = doctorServiceV2.getById(doctor_id);
@@ -175,7 +175,7 @@ public class PatientController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping("/updatePatient")
     public ApiResponse<String> updatePatient(@RequestBody Patient patient)
     {
         String result = patientService.upadatePatient(patient);

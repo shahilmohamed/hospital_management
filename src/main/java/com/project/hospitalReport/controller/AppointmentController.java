@@ -22,7 +22,7 @@ public class AppointmentController {
     @Autowired
     AppointmentService appointmentService;
 
-    @PostMapping("/add")
+    @PostMapping("/addAppointment")
     public ApiResponse<Appointment> addAppointment(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
         ApiResponse<Appointment> response = new ApiResponse<>();
         Patient patient = appointmentService.getPatientById(appointment.getId());
@@ -50,7 +50,7 @@ public class AppointmentController {
 
     }
 
-    @PostMapping("/get")
+    @PostMapping("/getAppointment")
     public ApiResponse<List<Map<String, Object>>> getAppointments(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
         List<Appointment> appointments = appointmentService.getAppointments(appointment.getDiagnosisDate(), doctor_id);
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
@@ -80,7 +80,7 @@ public class AppointmentController {
         }
     }
 
-    @PostMapping("/getConsulted")
+    @PostMapping("/getConsultedAppointments")
     public ApiResponse<List<Map<String, Object>>> getConsultedAppointments(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
         List<Appointment> appointments = appointmentService.getConsultedAppointments(appointment.getDiagnosisDate(), doctor_id);
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
@@ -110,7 +110,7 @@ public class AppointmentController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping("/updateAppointment")
     public ApiResponse<String> updateAppointment(@RequestBody Appointment appointment) {
         String result = appointmentService.updateAppointment(appointment);
         ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.OK.value());
