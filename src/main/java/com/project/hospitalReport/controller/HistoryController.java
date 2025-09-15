@@ -23,7 +23,7 @@ public class HistoryController {
     @Autowired
     HistoryService historyService;
 
-    @PostMapping("/add")
+    @PostMapping("/addHistory")
     public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistoryRequest history, @CookieValue(value = "id") Long doctor_id) {
         Patient patient = historyService.getPatientById(history.getPatient().getId());
         if (patient == null)
@@ -38,7 +38,7 @@ public class HistoryController {
             return new ApiResponse<>(null, "Can't Add Medical History!!!", HttpStatus.NO_CONTENT.value());
     }
 
-    @PostMapping("/get")
+    @PostMapping("/getHistory")
     public ApiResponse<List<Map<String, Object>>> searchMedicalHistory(@RequestBody Patient patient, @CookieValue(value = "id") Long doctor_id) {
         List<MedicalHistory> history = historyService.searchMedicalHistory(doctor_id, patient.getId());
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
