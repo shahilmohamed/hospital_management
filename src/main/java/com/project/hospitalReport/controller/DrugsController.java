@@ -92,7 +92,7 @@ public class DrugsController {
                 map.put("addedDate", d.getAddedDate());
                 map.put("mrp", d.getMrp());
                 map.put("name", d.getName());
-                map.put("perPiecePrice", d.getPerPieceRate());
+                map.put("perPieceRate", d.getPerPieceRate());
                 map.put("quantity", d.getQuantity());
                 map.put("updatedDate", d.getUpdatedDate());
                 result.add(map);
@@ -118,7 +118,7 @@ public class DrugsController {
             map.put("addedDate", stocks.getAddedDate());
             map.put("mrp", stocks.getMrp());
             map.put("name", stocks.getName());
-            map.put("perPiecePrice", stocks.getPerPieceRate());
+            map.put("perPieceRate", stocks.getPerPieceRate());
             map.put("quantity", stocks.getQuantity());
             map.put("updatedDate", stocks.getUpdatedDate());
 
