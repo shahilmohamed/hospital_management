@@ -117,4 +117,31 @@ public class AppointmentController {
         return response;
     }
 
+    @PostMapping("/getAppointmentById")
+    public ApiResponse<Map<String, Object>> getAppointmentById(@RequestBody Appointment appointment)
+    {
+        ApiResponse<Map<String, Object>> response = new ApiResponse<>();
+        Appointment a = appointmentService.getAppointmentById(appointment.getId());
+        if (a != null)
+        {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("id", a.getId());
+            map.put("contactNumber", a.getContactNumber());
+            map.put("diagnosis", a.getDiagnosis());
+            map.put("diagnosisDate", a.getDiagnosisDate());
+            map.put("firstname", a.getFirstname());
+            map.put("isConsulted", a.getIsConsulted());
+            map.put("lastname", a.getLastname());
+            map.put("doctor_id", a.getDoctor().getId());
+            map.put("patient_id", a.getPatient().getId());
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Appointments found");
+            response.setData(map);
+            return response;
+        }
+        response.setStatus(HttpStatus.NO_CONTENT.value());
+        response.setMessage("No Appointments found!!!");
+        return response;
+    }
+
 }
