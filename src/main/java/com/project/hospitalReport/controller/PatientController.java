@@ -137,7 +137,7 @@ public class PatientController {
             response.setData(result);
             return response;
         } else {
-            response.setStatus(HttpStatus.OK.value());
+            response.setStatus(HttpStatus.NO_CONTENT.value());
             response.setMessage("No Patients found!!!");
             return response;
         }

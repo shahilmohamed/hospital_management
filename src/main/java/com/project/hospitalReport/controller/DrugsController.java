@@ -1,15 +1,18 @@
 package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.ApiResponse;
+import com.project.hospitalReport.dto.PageRequ;
 import com.project.hospitalReport.entity.DrugLog;
 import com.project.hospitalReport.entity.DrugsStock;
 import com.project.hospitalReport.service.DrugsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
@@ -131,6 +134,30 @@ public class DrugsController {
         response.setMessage("Drug Not Found");
         response.setData(null);
         return response;
+    }
+
+    @PostMapping("/getDrugPage")
+    public ApiResponse<List<Map<String, Object>>> getDrugPage(@RequestBody PageRequ pageRequ)
+    {
+        Page<DrugsStock> medicines = drugsService.getDrugPage(pageRequ.getPage(), pageRequ.getSize());
+        List<Map<String, Object>> medicineList = medicines.getContent().stream()
+                .map(med -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", med.getId());
+                    map.put("addedDate", med.getAddedDate());
+                    map.put("mrp", med.getMrp());
+                    map.put("name", med.getName());
+                    map.put("perPieceRate", med.getPerPieceRate());
+                    map.put("quantity", med.getQuantity());
+                    map.put("updatedDate", med.getUpdatedDate());
+                    return map;
+                })
+                .collect(Collectors.toList());
+        if (medicineList.size()>0)
+        {
+            return new ApiResponse<>(medicineList, "Drugs Found!!!", HttpStatus.OK.value());
+        }
+        return new ApiResponse<>(null, "No Drugs Found!!!", HttpStatus.NO_CONTENT.value());
     }
 
 }
