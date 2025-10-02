@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PageRequ {
-    int page;
-    int size;
+    private Integer page;
+    private Integer size;
+    private String search;
 }

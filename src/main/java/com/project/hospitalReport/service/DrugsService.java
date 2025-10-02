@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -99,5 +100,10 @@ public class DrugsService {
     public Page<DrugsStock> getDrugPage(int page, int size)
     {
         return drugsRepo.findAll(PageRequest.of(page, size));
+    }
+
+    public Page<DrugsStock> searchDrug(String search, Pageable pageable)
+    {
+        return drugsRepo.findByNameContainingIgnoreCase(search, pageable);
     }
 }
