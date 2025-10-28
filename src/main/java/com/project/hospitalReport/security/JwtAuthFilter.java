@@ -65,8 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             deleteId.setPath("/");
             deleteId.setMaxAge(0);
             response.addCookie(deleteId);
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write("JWT Token expired");
             return;
         }
 
