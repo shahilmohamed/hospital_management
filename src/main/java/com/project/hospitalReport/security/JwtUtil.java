@@ -1,5 +1,7 @@
 package com.project.hospitalReport.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,6 +44,22 @@ public class JwtUtil {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         return extractUsername(token).equals(userDetails.getUsername()) && !isExpired(token);
+    }
+
+    public boolean isTokenExpired(String token){
+        try
+        {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getExpiration().before(new Date());
+        }
+        catch (ExpiredJwtException e){
+            return true;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
 }

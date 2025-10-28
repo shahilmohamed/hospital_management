@@ -46,7 +46,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        if (jwtToken != null) {
+        if (jwtToken != null && jwtUtil.isTokenExpired(jwtToken)){
+            Cookie deleteJwtToken = new Cookie("jwtToken", null);
+            deleteJwtToken.setHttpOnly(true);
+            deleteJwtToken.setSecure(true);
+            deleteJwtToken.setPath("/");
+            deleteJwtToken.setMaxAge(0);
+            response.addCookie(deleteJwtToken);
+            Cookie deleteName = new Cookie("name", null);
+            deleteName.setHttpOnly(true);
+            deleteName.setSecure(true);
+            deleteName.setPath("/");
+            deleteName.setMaxAge(0);
+            response.addCookie(deleteName);
+            Cookie deleteId = new Cookie("id", null);
+            deleteId.setHttpOnly(true);
+            deleteId.setSecure(true);
+            deleteId.setPath("/");
+            deleteId.setMaxAge(0);
+            response.addCookie(deleteId);
+            return;
+        }
+
+        else if (jwtToken != null && !jwtUtil.isTokenExpired(jwtToken)) {
             try {
                 String username = jwtUtil.extractUsername(jwtToken);
                 UserDetails userDetails = doctorServiceV2.loadUserByUsername(username);
