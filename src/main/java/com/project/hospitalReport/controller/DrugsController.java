@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
@@ -139,9 +140,14 @@ public class DrugsController {
     }
 
     @PostMapping("/getDrugPage")
-    public ApiResponse<List<Map<String, Object>>> getDrugPage(@RequestBody PageRequ pageRequ)
-    {
-        Page<DrugsStock> medicines = drugsService.getDrugPage(pageRequ.getPage(), pageRequ.getSize());
+    public ResponseEntity<Map<String, Object>> getDrugPage(@RequestBody PageRequ pageRequ) {
+        Page<DrugsStock> medicines;
+        if (pageRequ.getSearch().isEmpty()) {
+            medicines = drugsService.getDrugPage(pageRequ.getPage(), pageRequ.getSize());
+        } else {
+            Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+            medicines = drugsService.searchDrug(pageRequ.getSearch(), pageable);
+        }
         List<Map<String, Object>> medicineList = medicines.getContent().stream()
                 .map(med -> {
                     Map<String, Object> map = new HashMap<>();
@@ -155,11 +161,23 @@ public class DrugsController {
                     return map;
                 })
                 .collect(Collectors.toList());
-        if (medicineList.size()>0)
-        {
-            return new ApiResponse<>(medicineList, "Drugs Found!!!", HttpStatus.OK.value());
+
+        if (medicineList.size() > 0) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("message", "Drugs Found");
+            response.put("total Page", medicines.getTotalPages());
+            response.put("total Count", medicines.getTotalElements());
+            response.put("data", medicineList);
+            return ResponseEntity.ok(response);
         }
-        return new ApiResponse<>(null, "No Drugs Found!!!", HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.ok(Map.of(
+                "status", HttpStatus.NO_CONTENT.value(),
+                "message", "No Drugs Found!!!",
+                "data", Collections.emptyList(),
+                "total Count", 0,
+                "total Pages", 0
+        ));
     }
 
     @PostMapping("/searchDrug")
