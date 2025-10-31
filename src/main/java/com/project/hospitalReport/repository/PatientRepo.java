@@ -2,6 +2,8 @@ package com.project.hospitalReport.repository;
 
 import com.project.hospitalReport.entity.Patient;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -34,5 +36,25 @@ public interface PatientRepo extends JpaRepository<Patient, Long> {
             "WHERE (p.contactNumber = :contactNumber OR p.id = :id) " +
             "AND pd.doctor_id= :userId;", nativeQuery = true)
     List<Patient> searchPatient(@Param("userId") Long doctorId, @Param("contactNumber") String contactNumber, @Param("id") Long id);
+
+    @Query(value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob FROM patient_doctor pd JOIN patient p ON p.id = pd.patient_id WHERE pd.doctor_id= :doctorId", nativeQuery = true)
+    Page<Patient> findPatientByDoctorIdPage(@Param("doctorId") Long doctorId, Pageable pageable);
+
+    @Query(
+            value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob " +
+                    "FROM patient_doctor pd " +
+                    "JOIN patient p ON p.id = pd.patient_id " +
+                    "WHERE pd.doctor_id = :doctorId " +
+                    "AND (LOWER(p.firstname) LIKE LOWER(CONCAT('%', :search, '%')) " +
+                    "     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :search, '%')))",
+            countQuery = "SELECT COUNT(*) " +
+                    "FROM patient_doctor pd " +
+                    "JOIN patient p ON p.id = pd.patient_id " +
+                    "WHERE pd.doctor_id = :doctorId " +
+                    "AND (LOWER(p.firstname) LIKE LOWER(CONCAT('%', :search, '%')) " +
+                    "     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :search, '%')))",
+            nativeQuery = true
+    )
+    Page<Patient> findPatientByDoctorIdAndName(Long doctorId, String search, Pageable pageable);
 
 }

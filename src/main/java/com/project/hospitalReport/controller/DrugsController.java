@@ -166,8 +166,8 @@ public class DrugsController {
             Map<String, Object> response = new HashMap<>();
             response.put("status", HttpStatus.OK.value());
             response.put("message", "Drugs Found");
-            response.put("total Page", medicines.getTotalPages());
-            response.put("total Count", medicines.getTotalElements());
+            response.put("totalPage", medicines.getTotalPages());
+            response.put("totalCount", medicines.getTotalElements());
             response.put("data", medicineList);
             return ResponseEntity.ok(response);
         }
