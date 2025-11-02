@@ -28,6 +28,9 @@ public class HistoryService {
     @Autowired
     AppointmentService appointmentService;
 
+    @Autowired
+    DrugsService drugsService;
+
     public Patient getPatientById(Long id) {
         return patientService.getPatientById(id);
     }
@@ -52,8 +55,9 @@ public class HistoryService {
 
             List<Prescription> medicines = request.getPrescriptions().stream().map(med -> {
                 Prescription prescription = new Prescription();
+                DrugsStock d = drugsService.getById(med.getId());
                 prescription.setMedicalHistory(savedHistory);
-                prescription.setStocks(med.getStock());
+                prescription.setStocks(d);
                 prescription.setDosageMorning(med.getDosageMorning());
                 prescription.setDosageAfternoon(med.getDosageAfternoon());
                 prescription.setDosageNight(med.getDosageNight());

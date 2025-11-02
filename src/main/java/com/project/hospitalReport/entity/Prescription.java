@@ -8,7 +8,7 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@OneToOne
+	@ManyToOne
 	private DrugsStock stocks;
     private Boolean dosageMorning;
     private Boolean dosageAfternoon;

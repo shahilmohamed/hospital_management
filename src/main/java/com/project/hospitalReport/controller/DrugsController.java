@@ -181,7 +181,7 @@ public class DrugsController {
     }
 
     @PostMapping("/searchDrug")
-    public ApiResponse<List<Map<String, Object>>> searchDrug(@RequestBody PageRequ pageRequ)
+    public ResponseEntity<Map<String, Object>> searchDrug(@RequestBody PageRequ pageRequ)
     {
         Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
         Page<DrugsStock> medicines = drugsService.searchDrug(pageRequ.getSearch(), pageable);
@@ -198,11 +198,22 @@ public class DrugsController {
                     return map;
                 })
                 .collect(Collectors.toList());
-        if (medicineList.size()>0)
-        {
-            return new ApiResponse<>(medicineList, "Drugs Found!!!", HttpStatus.OK.value());
+        if (medicineList.size() > 0) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("message", "Drugs Found");
+            response.put("totalPage", medicines.getTotalPages());
+            response.put("totalCount", medicines.getTotalElements());
+            response.put("data", medicineList);
+            return ResponseEntity.ok(response);
         }
-        return new ApiResponse<>(null, "No Drugs Found!!!", HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.ok(Map.of(
+                "status", HttpStatus.NO_CONTENT.value(),
+                "message", "No Drugs Found!!!",
+                "data", Collections.emptyList(),
+                "total Count", 0,
+                "total Pages", 0
+        ));
     }
 
 }

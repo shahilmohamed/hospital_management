@@ -1,7 +1,6 @@
 package com.project.hospitalReport.dto;
 
 import com.project.hospitalReport.entity.Doctor;
-import com.project.hospitalReport.entity.DrugsStock;
 import com.project.hospitalReport.entity.Patient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Lob;
@@ -25,7 +24,7 @@ public class MedicalHistoryRequest {
 
     @Data
     public static class MedicineRequest {
-        private DrugsStock stock;
+        private Long id;
         private Boolean dosageMorning;
         private Boolean dosageAfternoon;
         private Boolean dosageNight;
