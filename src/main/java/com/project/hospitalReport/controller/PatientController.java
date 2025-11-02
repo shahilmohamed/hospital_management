@@ -1,15 +1,20 @@
 package com.project.hospitalReport.controller;
 
+import com.project.hospitalReport.dto.PageRequ;
 import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.dto.ApiResponse;
 import com.project.hospitalReport.service.DoctorServiceV2;
 import com.project.hospitalReport.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
@@ -226,6 +231,61 @@ public class PatientController {
             response.setMessage("No Patients found!!!");
             response.setData(null);
             return response;
+        }
+    }
+
+    @PostMapping("getPatientPage")
+    public ResponseEntity<Map<String, Object>> getPatientByDoctorId(@CookieValue(value = "id") Long doctor_id, @RequestBody PageRequ pageRequ)
+    {
+        Page<Patient> patients;
+        if (pageRequ.getSearch().isEmpty()) {
+            patients = patientService.getPatientByDoctorIdPage(doctor_id, pageRequ);
+        }
+        else {
+            patients = patientService.findPatientByDoctorIdAndName(doctor_id, pageRequ);
+        }
+
+        if (!patients.isEmpty())
+        {
+            List<Map<String, Object>> patientList = patients.getContent().stream()
+                            .map(p ->{
+                                Map<String, Object> map = new LinkedHashMap<>();
+                                map.put("id", p.getId());
+                                map.put("firstname", p.getFirstname());
+                                map.put("lastname", p.getLastname());
+                                map.put("address", p.getAddress());
+                                map.put("bloodGroup", p.getBloodGroup());
+                                map.put("contactNumber", p.getContactNumber());
+                                map.put("gender", p.getGender());
+                                map.put("dob", p.getDob());
+                                return map;
+                            })
+                                    .collect(Collectors.toList());
+            if (patientList.size()>0)
+            {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "Patients Found");
+                response.put("totalPage", patients.getTotalPages());
+                response.put("totalCount", patients.getTotalElements());
+                response.put("data", patientList);
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Patients Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
+        } else {
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Patients Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
         }
     }
 

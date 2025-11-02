@@ -1,9 +1,13 @@
 package com.project.hospitalReport.service;
 
+import com.project.hospitalReport.dto.PageRequ;
 import com.project.hospitalReport.repository.PatientRepo;
 import com.project.hospitalReport.entity.Patient;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -84,5 +88,17 @@ public class PatientService {
          } catch (EntityNotFoundException e) {
              return "Can't Find Patient To Delete";
          }
+    }
+
+    public Page<Patient> getPatientByDoctorIdPage(Long id, PageRequ pageRequ)
+    {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        return patientRepo.findPatientByDoctorIdPage(id, pageable);
+    }
+
+    public  Page<Patient> findPatientByDoctorIdAndName(Long id, PageRequ pageRequ)
+    {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        return patientRepo.findPatientByDoctorIdAndName(id, pageRequ.getSearch(), pageable);
     }
 }
