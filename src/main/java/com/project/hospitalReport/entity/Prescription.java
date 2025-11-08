@@ -3,6 +3,7 @@ package com.project.hospitalReport.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "prescription")
 public class Prescription {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
