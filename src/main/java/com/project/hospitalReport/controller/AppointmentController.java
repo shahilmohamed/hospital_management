@@ -76,6 +76,7 @@ public class AppointmentController {
         } else {
             response.setStatus(HttpStatus.NO_CONTENT.value());
             response.setMessage("No Appointments found!!!");
+            response.setData(result);
             return response;
         }
     }
