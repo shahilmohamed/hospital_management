@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.project.hospitalReport.dto.*;
+import com.project.hospitalReport.dto.ApiResponse;
+import com.project.hospitalReport.entity.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -294,7 +295,7 @@ public class DoctorService {
 		}
 	}
 
-	public ApiResponse<List<HashMap<String, Object>>> getDrugById(Integer id) {
+	public ApiResponse<List<HashMap<String, Object>>> getDrugById(Long id) {
 		List<Object[]> list = doctorDao.getDrugById(id);
 		ApiResponse<List<HashMap<String, Object>>> res = new ApiResponse<>();
 		if (list.size() > 0) {

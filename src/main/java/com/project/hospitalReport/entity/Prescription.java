@@ -1,14 +1,15 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.entity;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "prescription")
 public class Prescription {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-	@OneToOne
+	@ManyToOne
 	private DrugsStock stocks;
     private Boolean dosageMorning;
     private Boolean dosageAfternoon;
@@ -58,15 +59,11 @@ public class Prescription {
 		this.dosageNight = dosageNight;
 	}
 
-	public void setDurationDays(Integer durationDays) {
-		this.durationDays = durationDays;
-	}
-
-	public int getDurationDays() {
+	public Integer getDurationDays() {
 		return durationDays;
 	}
 
-	public void setDurationDays(int durationDays) {
+	public void setDurationDays(Integer durationDays) {
 		this.durationDays = durationDays;
 	}
 

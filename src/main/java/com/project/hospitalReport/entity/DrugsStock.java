@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.entity;
 
 import jakarta.persistence.*;
 
@@ -6,10 +6,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(name = "drugsstock")
 public class DrugsStock {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	private String name;
 	private Long quantity;
 	private Double mrp;
@@ -18,10 +19,10 @@ public class DrugsStock {
 	private LocalDate updatedDate;
 	@OneToMany(mappedBy = "stock")
 	private List<DrugLog> drugLogs;
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getName() {

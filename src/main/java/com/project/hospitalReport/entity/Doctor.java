@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.entity;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -7,13 +7,16 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "doctor")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Doctor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 	private String firstname;
 	private String lastname;
 	@Temporal(TemporalType.DATE)
@@ -30,12 +33,14 @@ public class Doctor {
 	@JsonIgnore
 	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
 	private List<MedicalHistory> medicalHistory;
+	@OneToMany(mappedBy = "doctor")
+	private List<Appointment> appointment;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -125,5 +130,13 @@ public class Doctor {
 
 	public void setMedicalHistory(List<MedicalHistory> medicalHistory) {
 		this.medicalHistory = medicalHistory;
+	}
+
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
 	}
 }

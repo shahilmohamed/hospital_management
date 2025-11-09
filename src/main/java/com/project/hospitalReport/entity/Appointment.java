@@ -1,14 +1,15 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.entity;
 
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "appointment")
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String firstname;
     private String lastname;
     private String contactNumber;
@@ -17,12 +18,14 @@ public class Appointment {
     private Boolean isConsulted;
     @ManyToOne
     private Patient patient;
+    @ManyToOne
+    private Doctor doctor;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -82,4 +85,11 @@ public class Appointment {
         this.patient = patient;
     }
 
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
 }

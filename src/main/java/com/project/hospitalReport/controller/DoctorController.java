@@ -3,7 +3,7 @@ package com.project.hospitalReport.controller;
 import java.util.HashMap;
 import java.util.List;
 
-import com.project.hospitalReport.dto.*;
+import com.project.hospitalReport.entity.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.hospitalReport.service.ApiResponse;
+import com.project.hospitalReport.dto.ApiResponse;
 import com.project.hospitalReport.service.DoctorService;
 
 @RestController
@@ -106,7 +106,7 @@ public class DoctorController {
 
 	@GetMapping("getDrugById")
 	public ApiResponse<List<HashMap<String, Object>>> getAllDrugs(@RequestBody DrugsStock d) {
-		Integer id = d.getId();
+		Long id = d.getId();
 		ApiResponse<List<HashMap<String, Object>>> result = doctorService.getDrugById(id);
 		return result;
 	}

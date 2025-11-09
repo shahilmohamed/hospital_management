@@ -1,4 +1,4 @@
-package com.project.hospitalReport.dto;
+package com.project.hospitalReport.entity;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "medicalhistory")
 @NoArgsConstructor
 @Getter
 @Setter
