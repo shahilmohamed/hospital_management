@@ -69,23 +69,23 @@ public class AuthController {
             String jwt = jwtUtil.genterateToken((UserDetails) authentication.getPrincipal());
             ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", jwt)
                     .httpOnly(true)
-                    .secure(false) 
+                    .secure(true)
                     .path("/")
                     .maxAge(24 * 7 * 60 * 60)
                     .sameSite("Lax")
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
             ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
-                    .httpOnly(false)
-                    .secure(false) 
+                    .httpOnly(true)
+                    .secure(true)
                     .path("/")
                     .maxAge(24 * 7 *60 * 60) 
                     .sameSite("Lax")
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
             ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
-                    .httpOnly(false)
-                    .secure(false) 
+                    .httpOnly(true)
+                    .secure(true)
                     .path("/")
                     .maxAge(24 * 7 *60 * 60) 
                     .sameSite("Lax")
@@ -96,7 +96,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
                     .httpOnly(true)
-                    .secure(false)
+                    .secure(true)
                     .path("/")
                     .maxAge(0)
                     .sameSite("Lax")
@@ -106,7 +106,7 @@ public class AuthController {
         } catch (Exception e) {
             ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
                     .httpOnly(true)
-                    .secure(false)
+                    .secure(true)
                     .path("/")
                     .maxAge(0)
                     .sameSite("Lax")
@@ -120,16 +120,16 @@ public class AuthController {
     @GetMapping("/logout")
     public ApiResponse<?> logout(HttpServletResponse response) {
         ResponseCookie nameCookie = ResponseCookie.from("name", "")
-                .httpOnly(false)
-                .secure(false)
+                .httpOnly(true)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
                 .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
         ResponseCookie idCookie = ResponseCookie.from("id", "")
-                .httpOnly(false)
-                .secure(false)
+                .httpOnly(true)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
                 .sameSite("Lax")
@@ -137,7 +137,7 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
         ResponseCookie jwtToken = ResponseCookie.from("jwtToken", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(0)
                 .sameSite("Lax")
