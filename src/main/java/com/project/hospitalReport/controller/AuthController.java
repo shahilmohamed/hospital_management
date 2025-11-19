@@ -72,7 +72,7 @@ public class AuthController {
                     .secure(true)
                     .path("/")
                     .maxAge(24 * 7 * 60 * 60)
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
             ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
@@ -80,7 +80,7 @@ public class AuthController {
                     .secure(true)
                     .path("/")
                     .maxAge(24 * 7 *60 * 60) 
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
             ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
@@ -88,7 +88,7 @@ public class AuthController {
                     .secure(true)
                     .path("/")
                     .maxAge(24 * 7 *60 * 60) 
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
 
@@ -99,7 +99,7 @@ public class AuthController {
                     .secure(true)
                     .path("/")
                     .maxAge(0)
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
             return new ApiResponse<>(null, "Invalid email or password", HttpStatus.UNAUTHORIZED.value());
@@ -109,7 +109,7 @@ public class AuthController {
                     .secure(true)
                     .path("/")
                     .maxAge(0)
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
             e.printStackTrace();
@@ -124,7 +124,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
         ResponseCookie idCookie = ResponseCookie.from("id", "")
@@ -132,7 +132,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
         ResponseCookie jwtToken = ResponseCookie.from("jwtToken", "")
@@ -140,7 +140,7 @@ public class AuthController {
                 .secure(true)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jwtToken.toString());
 
