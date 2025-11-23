@@ -9,7 +9,9 @@ import com.project.hospitalReport.dto.ApiResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,30 +69,55 @@ public class AuthController {
             Doctor user = doctor.get();
             String jwt = jwtUtil.genterateToken((UserDetails) authentication.getPrincipal());
 
-            Cookie cookie = new Cookie("jwtToken", jwt);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            Cookie id = new Cookie("id", String.valueOf(user.getId()));
-            id.setPath("/");
-            Cookie name = new Cookie("name", user.getFirstname() + "%20" + user.getLastname());
-            name.setPath("/");
-            response.addCookie(cookie);
-            response.addCookie(id);
-            response.addCookie(name);
+            // 7 days = 7 * 24 * 60 * 60 = 604800 seconds
+            long maxAge = 604800L;
+            
+            ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", jwt)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(maxAge)
+                    .build();
+            
+            ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(maxAge)
+                    .build();
+            
+            ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(maxAge)
+                    .build();
+            
+            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
+            
             return new ApiResponse<>(null, "Login successful", HttpStatus.OK.value());
         } catch (BadCredentialsException e) {
-            Cookie clearCookie = new Cookie("jwtToken", null);
-            clearCookie.setHttpOnly(true);
-            clearCookie.setMaxAge(0);
-            clearCookie.setPath("/");
-            response.addCookie(clearCookie);
+            ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+            response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
             return new ApiResponse<>(null, "Invalid email or password", HttpStatus.UNAUTHORIZED.value());
         } catch (Exception e) {
-            Cookie clearCookie = new Cookie("jwtToken", null);
-            clearCookie.setHttpOnly(true);
-            clearCookie.setMaxAge(0);
-            clearCookie.setPath("/");
-            response.addCookie(clearCookie);
+            ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+            response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
             e.printStackTrace();
             return new ApiResponse<>(null, "Server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
@@ -98,25 +125,31 @@ public class AuthController {
 
     @GetMapping("/logout")
     public ApiResponse<?> logout(HttpServletResponse response) {
-        Cookie nameCookie = new Cookie("name", "");
-        nameCookie.setPath("/");
-        nameCookie.setMaxAge(0);
-        nameCookie.setHttpOnly(false);
+        ResponseCookie nameCookie = ResponseCookie.from("name", "")
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
 
-        Cookie idCookie = new Cookie("id", "");
-        idCookie.setPath("/");
-        idCookie.setMaxAge(0);
-        idCookie.setHttpOnly(false);
+        ResponseCookie idCookie = ResponseCookie.from("id", "")
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
 
-        Cookie jwtToken = new Cookie("jwtToken", "");
-        jwtToken.setHttpOnly(true);
-        jwtToken.setPath("/");
-        jwtToken.setMaxAge(0); // Deletes cookie
-        jwtToken.setHttpOnly(false);
+        ResponseCookie jwtToken = ResponseCookie.from("jwtToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
 
-        response.addCookie(jwtToken);
-        response.addCookie(nameCookie);
-        response.addCookie(idCookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtToken.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
 
         return new ApiResponse<>(null, "Logged out successfully", 200);
     }

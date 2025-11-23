@@ -64,11 +64,16 @@ public class SecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 // Split multiple origins by comma if provided
                 String[] origins = allowedOrigins.split(",");
+                // Trim whitespace from each origin
+                for (int i = 0; i < origins.length; i++) {
+                    origins[i] = origins[i].trim();
+                }
                 registry.addMapping("/**")
-                        .allowedOrigins(origins)
+                        .allowedOriginPatterns(origins)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .allowCredentials(true)
+                        .maxAge(3600);
             }
         };
     }
