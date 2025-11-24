@@ -1,15 +1,16 @@
 package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.LoginRequest;
+import com.project.hospitalReport.dto.LoginResponse;
 import com.project.hospitalReport.dto.SignupRequest;
 import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.security.JwtUtil;
 import com.project.hospitalReport.repository.DoctorRepo;
 import com.project.hospitalReport.dto.ApiResponse;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -35,6 +36,9 @@ public class AuthController {
     private DoctorRepo userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Value("${cookie.domain:}")
+    private String cookieDomain;
 
     @PostMapping("/signup")
     public ApiResponse<String> registerUser(@RequestBody SignupRequest request) {
@@ -56,7 +60,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<?> login(@RequestBody LoginRequest request, HttpServletResponse response, HttpServletRequest httpRequest) {
+    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response, HttpServletRequest httpRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
@@ -82,101 +86,77 @@ public class AuthController {
             String sameSite = isSecure ? "None" : "Lax";
             boolean secure = isSecure;
             
-            ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", jwt)
-                    .httpOnly(true)
-                    .secure(secure)
-                    .sameSite(sameSite)
-                    .domain("subha-hospital.netlify.app")
-                    .path("/")
-                    .maxAge(maxAge)
-                    .build();
-            
-            ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
-                    .secure(secure)
-                    .sameSite(sameSite)
-                    .domain("subha-hospital.netlify.app")
-                    .path("/")
-                    .maxAge(maxAge)
-                    .build();
-            
-            ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
-                    .secure(secure)
-                    .sameSite(sameSite)
-                    .domain("subha-hospital.netlify.app")
-                    .path("/")
-                    .maxAge(maxAge)
-                    .build();
+            // Build cookies with optional domain configuration
+            ResponseCookie jwtCookie = buildCookie("jwtToken", jwt, maxAge, secure, sameSite, true);
+            ResponseCookie idCookie = buildCookie("id", String.valueOf(user.getId()), maxAge, secure, sameSite, false);
+            ResponseCookie nameCookie = buildCookie("name", user.getFirstname() + "%20" + user.getLastname(), maxAge, secure, sameSite, false);
             
             response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
             response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
             response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
             
-            return new ApiResponse<>(null, "Login successful", HttpStatus.OK.value());
+            // Return JWT token in response body as well (for Authorization header approach)
+            // This allows frontend to use either cookies or Authorization header
+            LoginResponse loginResponse = new LoginResponse(
+                jwt,
+                user.getId(),
+                user.getFirstname() + " " + user.getLastname(),
+                "Login successful"
+            );
+            
+            return new ApiResponse<>(loginResponse, "Login successful", HttpStatus.OK.value());
         } catch (BadCredentialsException e) {
-            boolean isSecure = httpRequest.isSecure() || 
-                              "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
-            String sameSite = isSecure ? "None" : "Lax";
-            ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
-                    .httpOnly(true)
-                    .secure(isSecure)
-                    .sameSite(sameSite)
-                    .path("/")
-                    .maxAge(0)
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
+            clearCookies(response, httpRequest);
             return new ApiResponse<>(null, "Invalid email or password", HttpStatus.UNAUTHORIZED.value());
         } catch (Exception e) {
-            boolean isSecure = httpRequest.isSecure() || 
-                              "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
-            String sameSite = isSecure ? "None" : "Lax";
-            ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
-                    .httpOnly(true)
-                    .secure(isSecure)
-                    .sameSite(sameSite)
-                    .path("/")
-                    .maxAge(0)
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
+            clearCookies(response, httpRequest);
             e.printStackTrace();
             return new ApiResponse<>(null, "Server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
-
-    @GetMapping("/logout")
-    public ApiResponse<?> logout(HttpServletResponse response, HttpServletRequest httpRequest) {
+    
+    /**
+     * Helper method to build cookies with consistent configuration
+     */
+    private ResponseCookie buildCookie(String name, String value, long maxAge, boolean secure, String sameSite, boolean httpOnly) {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(name, value)
+                .secure(secure)
+                .sameSite(sameSite)
+                .path("/")
+                .maxAge(maxAge);
+        
+        if (httpOnly) {
+            builder.httpOnly(true);
+        }
+        
+        // Set domain only if configured (for shared parent domain scenarios)
+        if (cookieDomain != null && !cookieDomain.trim().isEmpty()) {
+            builder.domain(cookieDomain);
+        }
+        
+        return builder.build();
+    }
+    
+    /**
+     * Helper method to clear all authentication cookies
+     */
+    private void clearCookies(HttpServletResponse response, HttpServletRequest httpRequest) {
         boolean isSecure = httpRequest.isSecure() || 
                           "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
         String sameSite = isSecure ? "None" : "Lax";
         
-        ResponseCookie nameCookie = ResponseCookie.from("name", "")
-                .secure(isSecure)
-                .sameSite(sameSite)
-                .domain("subha-hospital.netlify.app")
-                .path("/")
-                .maxAge(0)
-                .build();
-
-        ResponseCookie idCookie = ResponseCookie.from("id", "")
-                .secure(isSecure)
-                .sameSite(sameSite)
-                .domain("subha-hospital.netlify.app")
-                .path("/")
-                .maxAge(0)
-                .build();
-
-        ResponseCookie jwtToken = ResponseCookie.from("jwtToken", "")
-                .httpOnly(true)
-                .secure(isSecure)
-                .sameSite(sameSite)
-                .domain("subha-hospital.netlify.app")
-                .path("/")
-                .maxAge(0)
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, jwtToken.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
+        ResponseCookie jwtCookie = buildCookie("jwtToken", "", 0, isSecure, sameSite, true);
+        ResponseCookie idCookie = buildCookie("id", "", 0, isSecure, sameSite, false);
+        ResponseCookie nameCookie = buildCookie("name", "", 0, isSecure, sameSite, false);
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
+    }
 
+    @GetMapping("/logout")
+    public ApiResponse<?> logout(HttpServletResponse response, HttpServletRequest httpRequest) {
+        clearCookies(response, httpRequest);
         return new ApiResponse<>(null, "Logged out successfully", 200);
     }
 }
