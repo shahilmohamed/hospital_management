@@ -70,11 +70,15 @@ public class SecurityConfig {
         for (String origin : origins) {
             allowedOriginsList.add(origin.trim());
         }
-        configuration.setAllowedOrigins(allowedOriginsList);
+        // Use setAllowedOriginPatterns instead of setAllowedOrigins when allowCredentials is true
+        // This is required for cross-origin cookie handling
+        configuration.setAllowedOriginPatterns(allowedOriginsList);
         configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
+        // Explicitly expose Set-Cookie header so frontend can access it
+        configuration.setExposedHeaders(java.util.Arrays.asList("Set-Cookie"));
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
