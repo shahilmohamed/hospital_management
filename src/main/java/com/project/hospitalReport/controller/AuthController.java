@@ -7,6 +7,7 @@ import com.project.hospitalReport.security.JwtUtil;
 import com.project.hospitalReport.repository.DoctorRepo;
 import com.project.hospitalReport.dto.ApiResponse;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -55,7 +56,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+    public ApiResponse<?> login(@RequestBody LoginRequest request, HttpServletResponse response, HttpServletRequest httpRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
@@ -72,24 +73,33 @@ public class AuthController {
             // 7 days = 7 * 24 * 60 * 60 = 604800 seconds
             long maxAge = 604800L;
             
+            // Determine if request is secure (HTTPS) - check both isSecure() and X-Forwarded-Proto header (for proxies)
+            boolean isSecure = httpRequest.isSecure() || 
+                              "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
+            
+            // For cross-origin requests, use SameSite=None with Secure=true (HTTPS only)
+            // For same-origin or HTTP, use SameSite=Lax with Secure=false
+            String sameSite = isSecure ? "None" : "Lax";
+            boolean secure = isSecure;
+            
             ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", jwt)
                     .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
+                    .secure(secure)
+                    .sameSite(sameSite)
                     .path("/")
                     .maxAge(maxAge)
                     .build();
             
             ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
-                    .secure(true)
-                    .sameSite("None")
+                    .secure(secure)
+                    .sameSite(sameSite)
                     .path("/")
                     .maxAge(maxAge)
                     .build();
             
             ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
-                    .secure(true)
-                    .sameSite("None")
+                    .secure(secure)
+                    .sameSite(sameSite)
                     .path("/")
                     .maxAge(maxAge)
                     .build();
@@ -100,20 +110,26 @@ public class AuthController {
             
             return new ApiResponse<>(null, "Login successful", HttpStatus.OK.value());
         } catch (BadCredentialsException e) {
+            boolean isSecure = httpRequest.isSecure() || 
+                              "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
+            String sameSite = isSecure ? "None" : "Lax";
             ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
                     .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
+                    .secure(isSecure)
+                    .sameSite(sameSite)
                     .path("/")
                     .maxAge(0)
                     .build();
             response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
             return new ApiResponse<>(null, "Invalid email or password", HttpStatus.UNAUTHORIZED.value());
         } catch (Exception e) {
+            boolean isSecure = httpRequest.isSecure() || 
+                              "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
+            String sameSite = isSecure ? "None" : "Lax";
             ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
                     .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
+                    .secure(isSecure)
+                    .sameSite(sameSite)
                     .path("/")
                     .maxAge(0)
                     .build();
@@ -124,25 +140,29 @@ public class AuthController {
     }
 
     @GetMapping("/logout")
-    public ApiResponse<?> logout(HttpServletResponse response) {
+    public ApiResponse<?> logout(HttpServletResponse response, HttpServletRequest httpRequest) {
+        boolean isSecure = httpRequest.isSecure() || 
+                          "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
+        String sameSite = isSecure ? "None" : "Lax";
+        
         ResponseCookie nameCookie = ResponseCookie.from("name", "")
-                .secure(true)
-                .sameSite("None")
+                .secure(isSecure)
+                .sameSite(sameSite)
                 .path("/")
                 .maxAge(0)
                 .build();
 
         ResponseCookie idCookie = ResponseCookie.from("id", "")
-                .secure(true)
-                .sameSite("None")
+                .secure(isSecure)
+                .sameSite(sameSite)
                 .path("/")
                 .maxAge(0)
                 .build();
 
         ResponseCookie jwtToken = ResponseCookie.from("jwtToken", "")
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
+                .secure(isSecure)
+                .sameSite(sameSite)
                 .path("/")
                 .maxAge(0)
                 .build();
