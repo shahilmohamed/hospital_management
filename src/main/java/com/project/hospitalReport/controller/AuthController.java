@@ -86,6 +86,7 @@ public class AuthController {
                     .httpOnly(true)
                     .secure(secure)
                     .sameSite(sameSite)
+                    .domain("subha-hospital.netlify.app")
                     .path("/")
                     .maxAge(maxAge)
                     .build();
@@ -93,6 +94,7 @@ public class AuthController {
             ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
                     .secure(secure)
                     .sameSite(sameSite)
+                    .domain("subha-hospital.netlify.app")
                     .path("/")
                     .maxAge(maxAge)
                     .build();
@@ -100,6 +102,7 @@ public class AuthController {
             ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
                     .secure(secure)
                     .sameSite(sameSite)
+                    .domain("subha-hospital.netlify.app")
                     .path("/")
                     .maxAge(maxAge)
                     .build();
@@ -148,6 +151,7 @@ public class AuthController {
         ResponseCookie nameCookie = ResponseCookie.from("name", "")
                 .secure(isSecure)
                 .sameSite(sameSite)
+                .domain("subha-hospital.netlify.app")
                 .path("/")
                 .maxAge(0)
                 .build();
@@ -155,6 +159,7 @@ public class AuthController {
         ResponseCookie idCookie = ResponseCookie.from("id", "")
                 .secure(isSecure)
                 .sameSite(sameSite)
+                .domain("subha-hospital.netlify.app")
                 .path("/")
                 .maxAge(0)
                 .build();
@@ -163,6 +168,7 @@ public class AuthController {
                 .httpOnly(true)
                 .secure(isSecure)
                 .sameSite(sameSite)
+                .domain("subha-hospital.netlify.app")
                 .path("/")
                 .maxAge(0)
                 .build();
