@@ -75,21 +75,21 @@ public class AuthController {
             ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", jwt)
                     .httpOnly(true)
                     .secure(true)
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .path("/")
                     .maxAge(maxAge)
                     .build();
             
             ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
                     .secure(true)
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .path("/")
                     .maxAge(maxAge)
                     .build();
             
             ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
                     .secure(true)
-                    .sameSite("Lax")
+                    .sameSite("None")
                     .path("/")
                     .maxAge(maxAge)
                     .build();
