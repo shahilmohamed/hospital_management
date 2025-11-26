@@ -39,6 +39,9 @@ public class AuthController {
     
     @Value("${cookie.domain:}")
     private String cookieDomain;
+    
+    @Value("${cookie.frontend.domain:}")
+    private String frontendCookieDomain;
 
     @PostMapping("/signup")
     public ApiResponse<String> registerUser(@RequestBody SignupRequest request) {
@@ -86,14 +89,28 @@ public class AuthController {
             String sameSite = isSecure ? "None" : "Lax";
             boolean secure = isSecure;
             
-            // Build cookies with optional domain configuration
-            ResponseCookie jwtCookie = buildCookie("jwtToken", jwt, maxAge, secure, sameSite, true);
-            ResponseCookie idCookie = buildCookie("id", String.valueOf(user.getId()), maxAge, secure, sameSite, false);
-            ResponseCookie nameCookie = buildCookie("name", user.getFirstname() + "%20" + user.getLastname(), maxAge, secure, sameSite, false);
+            // Extract backend domain from request
+            String backendDomain = extractDomainFromRequest(httpRequest);
             
-            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
-            response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
-            response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
+            // Build cookies for backend domain
+            ResponseCookie jwtCookieBackend = buildCookie("jwtToken", jwt, maxAge, secure, sameSite, true, backendDomain);
+            ResponseCookie idCookieBackend = buildCookie("id", String.valueOf(user.getId()), maxAge, secure, sameSite, false, backendDomain);
+            ResponseCookie nameCookieBackend = buildCookie("name", user.getFirstname() + "%20" + user.getLastname(), maxAge, secure, sameSite, false, backendDomain);
+            
+            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookieBackend.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, idCookieBackend.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, nameCookieBackend.toString());
+            
+            // Build cookies for frontend domain if configured
+            if (frontendCookieDomain != null && !frontendCookieDomain.trim().isEmpty()) {
+                ResponseCookie jwtCookieFrontend = buildCookie("jwtToken", jwt, maxAge, secure, sameSite, true, frontendCookieDomain);
+                ResponseCookie idCookieFrontend = buildCookie("id", String.valueOf(user.getId()), maxAge, secure, sameSite, false, frontendCookieDomain);
+                ResponseCookie nameCookieFrontend = buildCookie("name", user.getFirstname() + "%20" + user.getLastname(), maxAge, secure, sameSite, false, frontendCookieDomain);
+                
+                response.addHeader(HttpHeaders.SET_COOKIE, jwtCookieFrontend.toString());
+                response.addHeader(HttpHeaders.SET_COOKIE, idCookieFrontend.toString());
+                response.addHeader(HttpHeaders.SET_COOKIE, nameCookieFrontend.toString());
+            }
             
             // Return JWT token in response body as well (for Authorization header approach)
             // This allows frontend to use either cookies or Authorization header
@@ -118,7 +135,7 @@ public class AuthController {
     /**
      * Helper method to build cookies with consistent configuration
      */
-    private ResponseCookie buildCookie(String name, String value, long maxAge, boolean secure, String sameSite, boolean httpOnly) {
+    private ResponseCookie buildCookie(String name, String value, long maxAge, boolean secure, String sameSite, boolean httpOnly, String domain) {
         ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(name, value)
                 .secure(secure)
                 .sameSite(sameSite)
@@ -129,12 +146,42 @@ public class AuthController {
             builder.httpOnly(true);
         }
         
-        // Set domain only if configured (for shared parent domain scenarios)
-        if (cookieDomain != null && !cookieDomain.trim().isEmpty()) {
+        // Set domain if provided
+        if (domain != null && !domain.trim().isEmpty()) {
+            builder.domain(domain);
+        } else if (cookieDomain != null && !cookieDomain.trim().isEmpty()) {
+            // Fallback to configured cookie domain if no specific domain provided
             builder.domain(cookieDomain);
         }
         
         return builder.build();
+    }
+    
+    /**
+     * Extract domain from HTTP request
+     */
+    private String extractDomainFromRequest(HttpServletRequest request) {
+        String host = request.getHeader("Host");
+        if (host == null || host.isEmpty()) {
+            return null;
+        }
+        
+        // Remove port if present (e.g., "localhost:8080" -> "localhost")
+        int portIndex = host.indexOf(':');
+        if (portIndex > 0) {
+            host = host.substring(0, portIndex);
+        }
+        
+        // For localhost, return as is
+        if ("localhost".equals(host) || "127.0.0.1".equals(host)) {
+            return host;
+        }
+        
+        // For production domains, extract the domain
+        // If it's a subdomain, you might want to return the parent domain with a dot prefix
+        // For example: api.example.com -> .example.com (if you want to share cookies)
+        // For now, return the full hostname
+        return host;
     }
     
     /**
@@ -145,13 +192,28 @@ public class AuthController {
                           "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
         String sameSite = isSecure ? "None" : "Lax";
         
-        ResponseCookie jwtCookie = buildCookie("jwtToken", "", 0, isSecure, sameSite, true);
-        ResponseCookie idCookie = buildCookie("id", "", 0, isSecure, sameSite, false);
-        ResponseCookie nameCookie = buildCookie("name", "", 0, isSecure, sameSite, false);
+        // Extract backend domain from request
+        String backendDomain = extractDomainFromRequest(httpRequest);
         
-        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
+        // Clear cookies for backend domain
+        ResponseCookie jwtCookieBackend = buildCookie("jwtToken", "", 0, isSecure, sameSite, true, backendDomain);
+        ResponseCookie idCookieBackend = buildCookie("id", "", 0, isSecure, sameSite, false, backendDomain);
+        ResponseCookie nameCookieBackend = buildCookie("name", "", 0, isSecure, sameSite, false, backendDomain);
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookieBackend.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, idCookieBackend.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, nameCookieBackend.toString());
+        
+        // Clear cookies for frontend domain if configured
+        if (frontendCookieDomain != null && !frontendCookieDomain.trim().isEmpty()) {
+            ResponseCookie jwtCookieFrontend = buildCookie("jwtToken", "", 0, isSecure, sameSite, true, frontendCookieDomain);
+            ResponseCookie idCookieFrontend = buildCookie("id", "", 0, isSecure, sameSite, false, frontendCookieDomain);
+            ResponseCookie nameCookieFrontend = buildCookie("name", "", 0, isSecure, sameSite, false, frontendCookieDomain);
+            
+            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookieFrontend.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, idCookieFrontend.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, nameCookieFrontend.toString());
+        }
     }
 
     @GetMapping("/logout")
