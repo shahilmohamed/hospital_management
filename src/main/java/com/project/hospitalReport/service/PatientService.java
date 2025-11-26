@@ -93,7 +93,7 @@ public class PatientService {
     public Page<Patient> getPatientByDoctorIdPage(Long id, PageRequ pageRequ)
     {
         Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
-        return patientRepo.findPatientByDoctorIdPage(id, pageable);
+        return patientRepo.findPatientByDoctorId(id, pageable);
     }
 
     public  Page<Patient> findPatientByDoctorIdAndName(Long id, PageRequ pageRequ)

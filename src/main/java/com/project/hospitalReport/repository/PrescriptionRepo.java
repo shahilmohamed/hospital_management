@@ -11,8 +11,5 @@ import java.util.List;
 @Repository
 public interface PrescriptionRepo extends JpaRepository<Prescription, Long> {
 
-    @Query(value = "select p.id, p.dosageMorning, p.dosageAfternoon, p.dosageNight, p.durationDays, p.medicalHistory_id, p.stocks_id " +
-            "from prescription as p " +
-            "where p.medicalHistory_id = :medicalHistoryId", nativeQuery = true)
-    List<Prescription> getPrescription(@Param("medicalHistoryId") Long medicalHistoryId);
+    List<Prescription> findByMedicalHistoryId(@Param("medicalHistoryId") Long medicalHistoryId);
 }

@@ -37,11 +37,11 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAppointments(LocalDate diagnosisDate, Long doctorId) {
-        return appointmentRepo.getAppointments(diagnosisDate, doctorId);
+        return appointmentRepo.findByDiagnosisDateAndDoctorIdAndIsConsultedFalse(diagnosisDate, doctorId);
     }
 
     public List<Appointment> getConsultedAppointments(LocalDate diagnosisDate, Long doctorId) {
-        return appointmentRepo.getConsultedAppointments(diagnosisDate, doctorId);
+        return appointmentRepo.findByDiagnosisDateAndDoctorIdAndIsConsultedTrue(diagnosisDate, doctorId);
     }
 
     public String updateAppointment(Appointment data) {
@@ -61,6 +61,14 @@ public class AppointmentService {
 
     public Appointment getAppointmentById(Long id) {
         return appointmentRepo.getById(id);
+    }
+
+    public Integer pendingAppointmentCount(LocalDate diagnosisDate, Long doctorId){
+        return appointmentRepo.countByDiagnosisDateAndDoctorIdAndIsConsultedFalse(diagnosisDate, doctorId);
+    }
+
+    public Integer todayAppointmentCount(LocalDate diagnosisDate, Long doctorId){
+        return appointmentRepo.countByDiagnosisDateAndDoctorId(diagnosisDate, doctorId);
     }
 
 }
