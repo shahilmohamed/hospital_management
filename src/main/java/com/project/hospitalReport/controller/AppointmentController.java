@@ -7,10 +7,12 @@ import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
@@ -141,27 +143,6 @@ public class AppointmentController {
         response.setStatus(HttpStatus.NO_CONTENT.value());
         response.setMessage("No Appointments found!!!");
         return response;
-    }
-
-    @PostMapping("/getAppointmentCount")
-    public ResponseEntity<Map<String, Object>> getAppointmentCount(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id){
-        Integer todayAppointmentCount = appointmentService.todayAppointmentCount(appointment.getDiagnosisDate(), doctor_id);
-        Integer pendingAppointmentCount = appointmentService.pendingAppointmentCount(appointment.getDiagnosisDate(), doctor_id);
-        Integer consultedAppointmentCount = todayAppointmentCount - pendingAppointmentCount;
-
-        System.out.println("Today appointment: "+todayAppointmentCount);
-        System.out.println("Pending appointment: "+pendingAppointmentCount);
-        System.out.println("Consulted appointment: "+consultedAppointmentCount);
-        Map<String, Object> data = new LinkedHashMap<>();
-        data.put("todays_appointment",todayAppointmentCount);
-        data.put("pending_appointment", pendingAppointmentCount);
-        data.put("consulted_appointment", consultedAppointmentCount);
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("status", HttpStatus.OK.value());
-        response.put("message", "Appointment count found");
-        response.put("data", data);
-        return ResponseEntity.ok(response);
-
     }
 
 }
