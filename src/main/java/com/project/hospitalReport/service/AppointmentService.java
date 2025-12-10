@@ -1,12 +1,18 @@
 package com.project.hospitalReport.service;
 
+import com.project.hospitalReport.dto.PageRequ;
 import com.project.hospitalReport.entity.Appointment;
 import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.repository.AppointmentRepo;
+import com.project.hospitalReport.repository.AppointmentSpecifications;
 import com.project.hospitalReport.repository.DoctorRepo;
 import com.project.hospitalReport.repository.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -37,11 +43,11 @@ public class AppointmentService {
     }
 
     public List<Appointment> getAppointments(LocalDate diagnosisDate, Long doctorId) {
-        return appointmentRepo.getAppointments(diagnosisDate, doctorId);
+        return appointmentRepo.findByDiagnosisDateAndDoctorIdAndIsConsultedFalse(diagnosisDate, doctorId);
     }
 
     public List<Appointment> getConsultedAppointments(LocalDate diagnosisDate, Long doctorId) {
-        return appointmentRepo.getConsultedAppointments(diagnosisDate, doctorId);
+        return appointmentRepo.findByDiagnosisDateAndDoctorIdAndIsConsultedTrue(diagnosisDate, doctorId);
     }
 
     public String updateAppointment(Appointment data) {
@@ -63,4 +69,27 @@ public class AppointmentService {
         return appointmentRepo.getById(id);
     }
 
+    public Page<Appointment> findUpcomingAppointments(Long id, PageRequ pageRequ) {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        return appointmentRepo.findByDiagnosisDateAndDoctorIdAndIsConsultedFalse(pageRequ.getDate(), id, pageable);
+    }
+
+    public Page<Appointment> findUpcomingAppointmentsWithSearch(Long doctorId, PageRequ pageRequ) {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        Specification<Appointment> spec = AppointmentSpecifications.findByDiagnosisDateDoctorIdAndIsConsultedFalseAndNameContaining(
+                LocalDate.now(), doctorId, pageRequ.getSearch());
+        return appointmentRepo.findAll(spec, pageable);
+    }
+
+    public Page<Appointment> findConsultedAppointments(Long id, PageRequ pageRequ) {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        return appointmentRepo.findByDiagnosisDateAndDoctorIdAndIsConsultedTrue(pageRequ.getDate(), id, pageable);
+    }
+
+    public Page<Appointment> findConsultedAppointmentsWithSearch(Long doctorId, PageRequ pageRequ) {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        Specification<Appointment> spec = AppointmentSpecifications.findByDiagnosisDateDoctorIdAndIsConsultedTrueAndNameContaining(
+                pageRequ.getDate(), doctorId, pageRequ.getSearch());
+        return appointmentRepo.findAll(spec, pageable);
+    }
 }
