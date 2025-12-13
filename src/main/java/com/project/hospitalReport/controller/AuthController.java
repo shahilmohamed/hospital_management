@@ -1,13 +1,16 @@
 package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.LoginRequest;
+import com.project.hospitalReport.dto.LoginResponse;
 import com.project.hospitalReport.dto.SignupRequest;
 import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.security.JwtUtil;
 import com.project.hospitalReport.repository.DoctorRepo;
 import com.project.hospitalReport.dto.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -33,6 +36,10 @@ public class AuthController {
     private DoctorRepo userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Value("${cookie.domain:}")
+    private String cookieDomain;
+
 
     @PostMapping("/signup")
     public ApiResponse<String> registerUser(@RequestBody SignupRequest request) {
@@ -54,7 +61,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response, HttpServletRequest httpRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
@@ -67,83 +74,97 @@ public class AuthController {
             }
             Doctor user = doctor.get();
             String jwt = jwtUtil.genterateToken((UserDetails) authentication.getPrincipal());
-            ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", jwt)
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(24 * 7 * 60 * 60)
-                    .sameSite("None")
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
-            ResponseCookie idCookie = ResponseCookie.from("id", String.valueOf(user.getId()))
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(24 * 7 *60 * 60) 
-                    .sameSite("None")
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
-            ResponseCookie nameCookie = ResponseCookie.from("name", user.getFirstname() + "%20" + user.getLastname())
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(24 * 7 *60 * 60) 
-                    .sameSite("None")
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
 
-            return new ApiResponse<>(null, "Login successful", HttpStatus.OK.value());
+            long maxAge = 604800L;
+
+            boolean isSecure = httpRequest.isSecure() || 
+                              "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
+
+            String sameSite = isSecure ? "None" : "Lax";
+            boolean secure = isSecure;
+
+            String backendDomain = extractDomainFromRequest(httpRequest);
+
+            ResponseCookie jwtCookieBackend = buildCookie("jwtToken", jwt, maxAge, secure, sameSite, true, backendDomain);
+            ResponseCookie idCookieBackend = buildCookie("id", String.valueOf(user.getId()), maxAge, secure, sameSite, false, backendDomain);
+            ResponseCookie nameCookieBackend = buildCookie("name", user.getFirstname() + "%20" + user.getLastname(), maxAge, secure, sameSite, false, backendDomain);
+            
+            response.addHeader(HttpHeaders.SET_COOKIE, jwtCookieBackend.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, idCookieBackend.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, nameCookieBackend.toString());
+
+            LoginResponse loginResponse = new LoginResponse(
+                jwt,
+                user.getId(),
+                user.getFirstname() + " " + user.getLastname(),
+                "Login successful"
+            );
+            
+            return new ApiResponse<>(loginResponse, "Login successful", HttpStatus.OK.value());
         } catch (BadCredentialsException e) {
-            ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(0)
-                    .sameSite("None")
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
+            clearCookies(response, httpRequest);
             return new ApiResponse<>(null, "Invalid email or password", HttpStatus.UNAUTHORIZED.value());
         } catch (Exception e) {
-            ResponseCookie clearCookie = ResponseCookie.from("jwtToken", "")
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(0)
-                    .sameSite("None")
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, clearCookie.toString());
+            clearCookies(response, httpRequest);
             e.printStackTrace();
             return new ApiResponse<>(null, "Server error", HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
-    @GetMapping("/logout")
-    public ApiResponse<?> logout(HttpServletResponse response) {
-        ResponseCookie nameCookie = ResponseCookie.from("name", "")
-                .httpOnly(true)
-                .secure(true)
+    private ResponseCookie buildCookie(String name, String value, long maxAge, boolean secure, String sameSite, boolean httpOnly, String domain) {
+        ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(name, value)
+                .secure(secure)
+                .sameSite(sameSite)
                 .path("/")
-                .maxAge(0)
-                .sameSite("None")
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, nameCookie.toString());
-        ResponseCookie idCookie = ResponseCookie.from("id", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(0)
-                .sameSite("None")
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, idCookie.toString());
-        ResponseCookie jwtToken = ResponseCookie.from("jwtToken", "")
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(0)
-                .sameSite("None")
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, jwtToken.toString());
+                .maxAge(maxAge);
+        
+        if (httpOnly) {
+            builder.httpOnly(true);
+        }
 
+        if (domain != null && !domain.trim().isEmpty()) {
+            builder.domain(domain);
+        } else if (cookieDomain != null && !cookieDomain.trim().isEmpty()) {
+            builder.domain(cookieDomain);
+        }
+        
+        return builder.build();
+    }
+
+    private String extractDomainFromRequest(HttpServletRequest request) {
+        String host = request.getHeader("Host");
+        if (host == null || host.isEmpty()) {
+            return null;
+        }
+        int portIndex = host.indexOf(':');
+        if (portIndex > 0) {
+            host = host.substring(0, portIndex);
+        }
+        if ("localhost".equals(host) || "127.0.0.1".equals(host)) {
+            return host;
+        }
+        return host;
+    }
+
+    private void clearCookies(HttpServletResponse response, HttpServletRequest httpRequest) {
+        boolean isSecure = httpRequest.isSecure() || 
+                          "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
+        String sameSite = isSecure ? "None" : "Lax";
+
+        String backendDomain = extractDomainFromRequest(httpRequest);
+        ResponseCookie jwtCookieBackend = buildCookie("jwtToken", "", 0, isSecure, sameSite, true, backendDomain);
+        ResponseCookie idCookieBackend = buildCookie("id", "", 0, isSecure, sameSite, false, backendDomain);
+        ResponseCookie nameCookieBackend = buildCookie("name", "", 0, isSecure, sameSite, false, backendDomain);
+        
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookieBackend.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, idCookieBackend.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, nameCookieBackend.toString());
+
+    }
+
+    @GetMapping("/logout")
+    public ApiResponse<?> logout(HttpServletResponse response, HttpServletRequest httpRequest) {
+        clearCookies(response, httpRequest);
         return new ApiResponse<>(null, "Logged out successfully", 200);
     }
 }

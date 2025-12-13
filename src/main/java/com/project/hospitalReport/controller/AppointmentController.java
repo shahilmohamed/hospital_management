@@ -1,18 +1,20 @@
 package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.ApiResponse;
+import com.project.hospitalReport.dto.PageRequ;
 import com.project.hospitalReport.entity.Appointment;
 import com.project.hospitalReport.entity.Doctor;
+import com.project.hospitalReport.entity.DrugsStock;
 import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
@@ -143,6 +145,116 @@ public class AppointmentController {
         response.setStatus(HttpStatus.NO_CONTENT.value());
         response.setMessage("No Appointments found!!!");
         return response;
+    }
+
+    @PostMapping("getAppointmentPage")
+    public ResponseEntity<Map<String, Object>>getAppointmentsPage(@CookieValue(value = "id") Long doctor_id, @RequestBody PageRequ pageRequ)
+    {
+        Page<Appointment> appointments;
+        if(pageRequ.getSearch().isEmpty()){
+            appointments = appointmentService.findUpcomingAppointments(doctor_id, pageRequ);
+        }
+        else {
+            appointments = appointmentService.findUpcomingAppointmentsWithSearch(doctor_id,pageRequ);
+        }
+        if (!appointments.isEmpty())
+        {
+            List<Map<String, Object>> appointmentList = appointments.getContent().stream()
+                    .map(a ->{
+                        Map<String, Object> map = new LinkedHashMap<>();
+                        map.put("id", a.getId());
+                        map.put("contactNumber", a.getContactNumber());
+                        map.put("diagnosis", a.getDiagnosis());
+                        map.put("diagnosisDate", a.getDiagnosisDate());
+                        map.put("firstname", a.getFirstname());
+                        map.put("isConsulted", a.getIsConsulted());
+                        map.put("lastname", a.getLastname());
+                        map.put("doctor_id", a.getDoctor().getId());
+                        map.put("patient_id", a.getPatient().getId());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+            if (appointmentList.size()>0)
+            {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "Appointments Found");
+                response.put("totalPage", appointments.getTotalPages());
+                response.put("totalCount", appointments.getTotalElements());
+                response.put("data", appointmentList);
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Appointments Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
+        }else {
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Patients Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
+        }
+    }
+
+    @PostMapping("getConsultedAppointmentsPage")
+    public ResponseEntity<Map<String, Object>>getConsultedAppointmentsPage(@CookieValue(value = "id") Long doctor_id, @RequestBody PageRequ pageRequ)
+    {
+        Page<Appointment> appointments;
+        if(pageRequ.getSearch().isEmpty()){
+            appointments = appointmentService.findConsultedAppointments(doctor_id, pageRequ);
+        }
+        else {
+            appointments = appointmentService.findConsultedAppointmentsWithSearch(doctor_id,pageRequ);
+        }
+        if (!appointments.isEmpty())
+        {
+            List<Map<String, Object>> appointmentList = appointments.getContent().stream()
+                    .map(a ->{
+                        Map<String, Object> map = new LinkedHashMap<>();
+                        map.put("id", a.getId());
+                        map.put("contactNumber", a.getContactNumber());
+                        map.put("diagnosis", a.getDiagnosis());
+                        map.put("diagnosisDate", a.getDiagnosisDate());
+                        map.put("firstname", a.getFirstname());
+                        map.put("isConsulted", a.getIsConsulted());
+                        map.put("lastname", a.getLastname());
+                        map.put("doctor_id", a.getDoctor().getId());
+                        map.put("patient_id", a.getPatient().getId());
+                        return map;
+                    })
+                    .collect(Collectors.toList());
+            if (appointmentList.size()>0)
+            {
+                Map<String, Object> response = new HashMap<>();
+                response.put("status", HttpStatus.OK.value());
+                response.put("message", "Appointments Found");
+                response.put("totalPage", appointments.getTotalPages());
+                response.put("totalCount", appointments.getTotalElements());
+                response.put("data", appointmentList);
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Appointments Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
+        }else {
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Patients Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
+        }
     }
 
 }
