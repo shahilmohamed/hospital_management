@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class DrugsService {
             actualStock.setMrp(updatedStock.getMrp());
             actualStock.setName(updatedStock.getName());
             actualStock.setPerPieceRate(updatedStock.getPerPieceRate());
-            actualStock.setUpdatedDate(updatedStock.getUpdatedDate());
+            actualStock.setUpdatedDate(LocalDate.now());
 
             DrugLog drugLog = new DrugLog();
             Long difference = updatedStock.getQuantity() - actualStock.getQuantity();
@@ -58,7 +59,7 @@ public class DrugsService {
             }
             drugLog.setDrugName(updatedStock.getName());
             drugLog.setAvailableQuantity(updatedStock.getQuantity());
-            drugLog.setUpdatedDate(updatedStock.getUpdatedDate());
+            drugLog.setUpdatedDate(LocalDate.now());
             drugLog.setUpdatedTime(LocalTime.now());
 
             drugLog.setStock(actualStock);
@@ -105,5 +106,10 @@ public class DrugsService {
     public Page<DrugsStock> searchDrug(String search, Pageable pageable)
     {
         return drugsRepo.findByNameContainingIgnoreCase(search, pageable);
+    }
+
+    public Page<DrugLog> getLogById(Long id, Pageable pageable) {
+        DrugsStock stock = drugsRepo.getById(id);
+        return drugsLogRepo.getByStockOrderByUpdatedDateDescUpdatedTimeDesc(stock, pageable);
     }
 }

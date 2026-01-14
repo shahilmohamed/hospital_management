@@ -96,8 +96,7 @@ public class AuthController {
             LoginResponse loginResponse = new LoginResponse(
                 jwt,
                 user.getId(),
-                user.getFirstname() + " " + user.getLastname(),
-                "Login successful"
+                user.getFirstname() + " " + user.getLastname()
             );
             
             return new ApiResponse<>(loginResponse, "Login successful", HttpStatus.OK.value());
