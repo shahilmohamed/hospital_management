@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class DrugsController {
                 d.setName(stock.getName());
                 d.setPerPieceRate(stock.getPerPieceRate());
                 d.setQuantity(stock.getQuantity());
-                d.setUpdatedDate(stock.getUpdatedDate());
+                d.setUpdatedDate(LocalDate.now());
                 drugsService.addDrug(d);
 
                 DrugLog dl = new DrugLog();
@@ -45,7 +46,7 @@ public class DrugsController {
                 dl.setAddedQuantity(stock.getQuantity());
                 dl.setAvailableQuantity(stock.getQuantity());
                 dl.setSoldQuantity(0L);
-                dl.setUpdatedDate(stock.getUpdatedDate());
+                dl.setUpdatedDate(LocalDate.now());
                 dl.setUpdatedTime(LocalTime.now());
                 dl.setStock(d);
                 drugsService.addLog(dl);
@@ -205,6 +206,44 @@ public class DrugsController {
             response.put("totalPage", medicines.getTotalPages());
             response.put("totalCount", medicines.getTotalElements());
             response.put("data", medicineList);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.ok(Map.of(
+                "status", HttpStatus.NO_CONTENT.value(),
+                "message", "No Drugs Found!!!",
+                "data", Collections.emptyList(),
+                "total Count", 0,
+                "total Pages", 0
+        ));
+    }
+
+    @PostMapping("/drugLog")
+    public ResponseEntity<Map<String, Object>> getDrugLog(@RequestBody PageRequ pageRequ)
+    {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        Page<DrugLog> logs = drugsService.getLogById(pageRequ.getId(),pageable);
+        List<Map<String, Object>> logList = logs.getContent().stream()
+                .map(log -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", log.getId());
+                    map.put("updatedDate", log.getUpdatedDate());
+                    map.put("drugName", log.getDrugName());
+                    map.put("updatedTime", log.getUpdatedTime());
+                    map.put("addedQuantity", log.getAddedQuantity());
+                    map.put("soldQuantity", log.getSoldQuantity());
+                    map.put("availableQuantity", log.getAvailableQuantity());
+                    map.put("stock", log.getStock().getId());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        if (logList.size() > 0) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("message", "Drugs Found");
+            response.put("totalPage", logs.getTotalPages());
+            response.put("totalCount", logs.getTotalElements());
+            response.put("data", logList);
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.ok(Map.of(

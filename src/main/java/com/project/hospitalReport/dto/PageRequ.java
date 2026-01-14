@@ -14,4 +14,5 @@ public class PageRequ {
     private Integer size;
     private String search;
     private LocalDate date;
+    private Long id;
 }
