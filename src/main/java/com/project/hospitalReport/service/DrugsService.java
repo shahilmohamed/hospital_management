@@ -110,6 +110,6 @@ public class DrugsService {
 
     public Page<DrugLog> getLogById(Long id, Pageable pageable) {
         DrugsStock stock = drugsRepo.getById(id);
-        return drugsLogRepo.getByStock(stock, pageable);
+        return drugsLogRepo.getByStockOrderByUpdatedDateDescUpdatedTimeDesc(stock, pageable);
     }
 }

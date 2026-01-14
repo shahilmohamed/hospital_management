@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DrugsLogRepo extends JpaRepository<DrugLog, Long> {
-    Page<DrugLog>getByStock (DrugsStock stock, Pageable pageable);
+    Page<DrugLog> getByStockOrderByUpdatedDateDescUpdatedTimeDesc(DrugsStock stock, Pageable pageable);
 }
