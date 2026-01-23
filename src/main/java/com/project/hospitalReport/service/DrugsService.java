@@ -110,6 +110,12 @@ public class DrugsService {
 
     public Page<DrugLog> getLogById(Long id, Pageable pageable) {
         DrugsStock stock = drugsRepo.getById(id);
-        return drugsLogRepo.getByStockOrderByUpdatedDateDescUpdatedTimeDesc(stock, pageable);
+        return drugsLogRepo.findByStock(stock, pageable);
+    }
+
+    public Page<DrugLog> getFilterLog(LocalDate fromDate, LocalDate toDate, Long id, Pageable pageable)
+    {
+        DrugsStock stock = drugsRepo.getById(id);
+        return drugsLogRepo.findByStockAndUpdatedDateBetween(stock, fromDate, toDate, pageable);
     }
 }

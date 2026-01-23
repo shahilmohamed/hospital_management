@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -220,8 +221,47 @@ public class DrugsController {
     @PostMapping("/drugLog")
     public ResponseEntity<Map<String, Object>> getDrugLog(@RequestBody PageRequ pageRequ)
     {
-        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize(), Sort.by(Sort.Direction.DESC, "id"));
         Page<DrugLog> logs = drugsService.getLogById(pageRequ.getId(),pageable);
+        List<Map<String, Object>> logList = logs.getContent().stream()
+                .map(log -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", log.getId());
+                    map.put("updatedDate", log.getUpdatedDate());
+                    map.put("drugName", log.getDrugName());
+                    map.put("updatedTime", log.getUpdatedTime());
+                    map.put("addedQuantity", log.getAddedQuantity());
+                    map.put("soldQuantity", log.getSoldQuantity());
+                    map.put("availableQuantity", log.getAvailableQuantity());
+                    map.put("stock", log.getStock().getId());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        if (logList.size() > 0) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("message", "Drugs Found");
+            response.put("totalPage", logs.getTotalPages());
+            response.put("totalCount", logs.getTotalElements());
+            response.put("data", logList);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.ok(Map.of(
+                "status", HttpStatus.NO_CONTENT.value(),
+                "message", "No Drugs Found!!!",
+                "data", Collections.emptyList(),
+                "total Count", 0,
+                "total Pages", 0
+        ));
+    }
+
+    @PostMapping("/drugLogFilter")
+    public ResponseEntity<Map<String, Object>> getFilterLog(@RequestBody PageRequ pageRequ)
+    {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize(), 
+                Sort.by(Sort.Direction.DESC, "id"));
+        Page<DrugLog> logs = drugsService.getFilterLog(pageRequ.getFromDate(), pageRequ.getToDate(),pageRequ.getId(),pageable);
         List<Map<String, Object>> logList = logs.getContent().stream()
                 .map(log -> {
                     Map<String, Object> map = new HashMap<>();
