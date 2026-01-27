@@ -116,6 +116,10 @@ public class DrugsService {
     public Page<DrugLog> getFilterLog(LocalDate fromDate, LocalDate toDate, Long id, Pageable pageable)
     {
         DrugsStock stock = drugsRepo.getById(id);
+        if (fromDate.isAfter(toDate))
+        {
+            return drugsLogRepo.findByStockAndUpdatedDateBetween(stock, toDate, fromDate, pageable);
+        }
         return drugsLogRepo.findByStockAndUpdatedDateBetween(stock, fromDate, toDate, pageable);
     }
 }
