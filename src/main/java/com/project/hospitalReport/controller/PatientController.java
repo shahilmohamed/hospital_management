@@ -6,6 +6,7 @@ import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.dto.ApiResponse;
 import com.project.hospitalReport.service.DoctorServiceV2;
 import com.project.hospitalReport.service.PatientService;
+import com.project.hospitalReport.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,9 @@ public class PatientController {
 
     @Autowired
     private DoctorServiceV2 doctorServiceV2;
+
+    @Autowired
+    private SecurityService securityService;
 
     @GetMapping("/getAll")
     public ApiResponse<List<Map<String, Object>>> getPatient() {
@@ -56,8 +60,9 @@ public class PatientController {
     }
 
     @PostMapping("/addPatient")
-    public ApiResponse<Patient> addPatient(@RequestBody Patient patient, @CookieValue(name = "id") Long doctor_id) {
+    public ApiResponse<Patient> addPatient(@RequestBody Patient patient) {
         ApiResponse<Patient> response = new ApiResponse<>();
+        Long doctor_id = securityService.getCurrentDoctorId();
         Doctor doctor = doctorServiceV2.getById(doctor_id);
         if (doctor != null) {
             Optional<Patient> existing = patientService.findByFirstnameAndLastnameAndGenderAndContactNumberAndBloodGroupAndDob(
@@ -117,8 +122,9 @@ public class PatientController {
     }
 
     @GetMapping("getAllPatient")
-    public ApiResponse<List<Map<String, Object>>> getPatientByDoctorId(@CookieValue(value = "id") Long doctor_id)
+    public ApiResponse<List<Map<String, Object>>> getPatientByDoctorId()
     {
+        Long doctor_id = securityService.getCurrentDoctorId();
         List<Patient> patients = patientService.getPatientByDoctorId(doctor_id);
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -149,8 +155,9 @@ public class PatientController {
     }
 
     @PostMapping("searchPatient")
-    public ApiResponse<List<Map<String, Object>>> searchPatient(@RequestBody Patient patient, @CookieValue(value = "id") Long doctor_id)
+    public ApiResponse<List<Map<String, Object>>> searchPatient(@RequestBody Patient patient)
     {
+        Long doctor_id = securityService.getCurrentDoctorId();
         List<Patient> patients = patientService.searchPatient(doctor_id, patient);
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -235,8 +242,9 @@ public class PatientController {
     }
 
     @PostMapping("getPatientPage")
-    public ResponseEntity<Map<String, Object>> getPatientByDoctorId(@CookieValue(value = "id") Long doctor_id, @RequestBody PageRequ pageRequ)
+    public ResponseEntity<Map<String, Object>> getPatientByDoctorId(@RequestBody PageRequ pageRequ)
     {
+        Long doctor_id = securityService.getCurrentDoctorId();
         Page<Patient> patients;
         if (pageRequ.getSearch().isEmpty()) {
             patients = patientService.getPatientByDoctorIdPage(doctor_id, pageRequ);
