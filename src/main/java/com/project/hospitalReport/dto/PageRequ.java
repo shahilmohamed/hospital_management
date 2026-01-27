@@ -15,4 +15,6 @@ public class PageRequ {
     private String search;
     private LocalDate date;
     private Long id;
+    private LocalDate fromDate;
+    private LocalDate toDate;
 }
