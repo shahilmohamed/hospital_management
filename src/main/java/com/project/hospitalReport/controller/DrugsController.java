@@ -29,39 +29,7 @@ public class DrugsController {
 
     @PostMapping("/addDrug")
     public ApiResponse<DrugsStock> addDrugs(@RequestBody DrugsStock stock) {
-        Optional<DrugsStock> drugs = drugsService.findByName(stock);
-        if (drugs.isEmpty()) {
-            try {
-                ApiResponse<DrugsStock> response = new ApiResponse<>();
-                DrugsStock d = new DrugsStock();
-                d.setAddedDate(stock.getAddedDate());
-                d.setMrp(stock.getMrp());
-                d.setName(stock.getName());
-                d.setPerPieceRate(stock.getPerPieceRate());
-                d.setQuantity(stock.getQuantity());
-                d.setUpdatedDate(LocalDate.now());
-                drugsService.addDrug(d);
-
-                DrugLog dl = new DrugLog();
-                dl.setDrugName(stock.getName());
-                dl.setAddedQuantity(stock.getQuantity());
-                dl.setAvailableQuantity(stock.getQuantity());
-                dl.setSoldQuantity(0L);
-                dl.setUpdatedDate(LocalDate.now());
-                dl.setUpdatedTime(LocalTime.now());
-                dl.setStock(d);
-                drugsService.addLog(dl);
-
-                response.setStatus(HttpStatus.OK.value());
-                response.setMessage("Drugs Added Successfully");
-                response.setData(null);
-                return response;
-            } catch (Exception e) {
-                return new ApiResponse<>(null, e.toString(), HttpStatus.NO_CONTENT.value());
-            }
-        } else {
-            return new ApiResponse<>(null, "Drug Already Present", HttpStatus.NO_CONTENT.value());
-        }
+        return drugsService.addDrugAndLog(stock);
     }
 
     @PutMapping("/updateDrug")
@@ -234,6 +202,7 @@ public class DrugsController {
                     map.put("soldQuantity", log.getSoldQuantity());
                     map.put("availableQuantity", log.getAvailableQuantity());
                     map.put("stock", log.getStock().getId());
+                    map.put("modifiedBy", log.getDoctor().getFirstname()+ " "+log.getDoctor().getLastname());
                     return map;
                 })
                 .collect(Collectors.toList());
@@ -273,6 +242,7 @@ public class DrugsController {
                     map.put("soldQuantity", log.getSoldQuantity());
                     map.put("availableQuantity", log.getAvailableQuantity());
                     map.put("stock", log.getStock().getId());
+                    map.put("modifiedBy", log.getDoctor().getFirstname()+" "+log.getDoctor().getLastname());
                     return map;
                 })
                 .collect(Collectors.toList());

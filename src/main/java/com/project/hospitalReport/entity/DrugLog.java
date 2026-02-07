@@ -20,6 +20,8 @@ public class DrugLog {
     private Long availableQuantity;
     @ManyToOne
     private DrugsStock stock;
+    @ManyToOne
+    private Doctor doctor;
 
     public Long getId() {
         return id;
@@ -83,5 +85,13 @@ public class DrugLog {
 
     public void setAddedQuantity(Long addedQuantity) {
         this.addedQuantity = addedQuantity;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 }
