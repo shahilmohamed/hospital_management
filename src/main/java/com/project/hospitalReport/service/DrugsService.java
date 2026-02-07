@@ -1,5 +1,7 @@
 package com.project.hospitalReport.service;
 
+import com.project.hospitalReport.dto.ApiResponse;
+import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.DrugLog;
 import com.project.hospitalReport.entity.DrugsStock;
 import com.project.hospitalReport.repository.DrugsLogRepo;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,12 +28,56 @@ public class DrugsService {
     @Autowired
     DrugsLogRepo drugsLogRepo;
 
+    @Autowired
+    SecurityService securityService;
+
     public DrugsStock addDrug(DrugsStock stock) {
         return drugsRepo.save(stock);
     }
 
     public DrugLog addLog(DrugLog log) {
+        Doctor doctor = securityService.getCurrentDoctor();
+        log.setDoctor(doctor);
         return drugsLogRepo.save(log);
+    }
+
+    public ApiResponse<DrugsStock> addDrugAndLog(DrugsStock stock)
+    {
+        Doctor doctor = securityService.getCurrentDoctor();
+        Optional<DrugsStock> drugs = findByName(stock);
+        if (drugs.isEmpty()) {
+            try {
+                ApiResponse<DrugsStock> response = new ApiResponse<>();
+                DrugsStock d = new DrugsStock();
+                d.setAddedDate(stock.getAddedDate());
+                d.setMrp(stock.getMrp());
+                d.setName(stock.getName());
+                d.setPerPieceRate(stock.getPerPieceRate());
+                d.setQuantity(stock.getQuantity());
+                d.setUpdatedDate(LocalDate.now());
+                addDrug(d);
+
+                DrugLog dl = new DrugLog();
+                dl.setDrugName(stock.getName());
+                dl.setAddedQuantity(stock.getQuantity());
+                dl.setAvailableQuantity(stock.getQuantity());
+                dl.setSoldQuantity(0L);
+                dl.setUpdatedDate(LocalDate.now());
+                dl.setUpdatedTime(LocalTime.now());
+                dl.setStock(d);
+                dl.setDoctor(null);
+                addLog(dl);
+
+                response.setStatus(HttpStatus.OK.value());
+                response.setMessage("Drugs Added Successfully");
+                response.setData(null);
+                return response;
+            } catch (Exception e) {
+                return new ApiResponse<>(null, e.toString(), HttpStatus.NO_CONTENT.value());
+            }
+        } else {
+            return new ApiResponse<>(null, "Drug Already Present", HttpStatus.NO_CONTENT.value());
+        }
     }
 
     public Optional<DrugsStock> findByName(DrugsStock stock) {
@@ -39,6 +86,7 @@ public class DrugsService {
 
     public String updateDrug(DrugsStock updatedStock) {
         DrugsStock actualStock = drugsRepo.getById(updatedStock.getId());
+        Doctor doctor = securityService.getCurrentDoctor();
         if (actualStock != null) {
 
             actualStock.setAddedDate(updatedStock.getAddedDate());
@@ -63,6 +111,7 @@ public class DrugsService {
             drugLog.setUpdatedTime(LocalTime.now());
 
             drugLog.setStock(actualStock);
+            drugLog.setDoctor(doctor);
             drugsLogRepo.save(drugLog);
 
             actualStock.setQuantity(updatedStock.getQuantity());

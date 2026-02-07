@@ -35,6 +35,8 @@ public class Doctor {
 	private List<MedicalHistory> medicalHistory;
 	@OneToMany(mappedBy = "doctor")
 	private List<Appointment> appointment;
+	@OneToMany(mappedBy = "doctor")
+	private List<DrugLog> drugLogs;
 
 	public Long getId() {
 		return id;
@@ -138,5 +140,13 @@ public class Doctor {
 
 	public void setAppointment(List<Appointment> appointment) {
 		this.appointment = appointment;
+	}
+
+	public List<DrugLog> getDrugLogs() {
+		return drugLogs;
+	}
+
+	public void setDrugLogs(List<DrugLog> drugLogs) {
+		this.drugLogs = drugLogs;
 	}
 }

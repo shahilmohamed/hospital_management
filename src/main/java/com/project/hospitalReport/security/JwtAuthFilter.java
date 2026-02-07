@@ -3,7 +3,6 @@ package com.project.hospitalReport.security;
 import com.project.hospitalReport.service.DoctorUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -36,39 +36,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String jwtToken = null;
+        String jwtToken = extractTokenFromRequest(request);
 
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("jwtToken".equals(cookie.getName())) {
-                    jwtToken = cookie.getValue();
-                }
-            }
-        }
-
-        if (jwtToken != null && jwtUtil.isTokenExpired(jwtToken)){
-            Cookie deleteJwtToken = new Cookie("jwtToken", null);
-            deleteJwtToken.setHttpOnly(true);
-            deleteJwtToken.setSecure(true);
-            deleteJwtToken.setPath("/");
-            deleteJwtToken.setMaxAge(0);
-            response.addCookie(deleteJwtToken);
-            Cookie deleteName = new Cookie("name", null);
-            deleteName.setHttpOnly(true);
-            deleteName.setSecure(true);
-            deleteName.setPath("/");
-            deleteName.setMaxAge(0);
-            response.addCookie(deleteName);
-            Cookie deleteId = new Cookie("id", null);
-            deleteId.setHttpOnly(true);
-            deleteId.setSecure(true);
-            deleteId.setPath("/");
-            deleteId.setMaxAge(0);
-            response.addCookie(deleteId);
+        if (jwtToken != null && jwtUtil.isTokenExpired(jwtToken)) {
+            SecurityContextHolder.clearContext();
+            filterChain.doFilter(request, response);
             return;
         }
 
-        else if (jwtToken != null && !jwtUtil.isTokenExpired(jwtToken)) {
+        if (jwtToken != null && !jwtUtil.isTokenExpired(jwtToken)) {
             try {
                 String username = jwtUtil.extractUsername(jwtToken);
                 UserDetails userDetails = doctorServiceV2.loadUserByUsername(username);
@@ -82,9 +58,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             } catch (Exception e) {
                 System.out.println("JWT validation failed: " + e.getMessage());
+                SecurityContextHolder.clearContext();
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String extractTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }

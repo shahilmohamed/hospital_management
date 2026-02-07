@@ -7,6 +7,7 @@ import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.DrugsStock;
 import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.service.AppointmentService;
+import com.project.hospitalReport.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,13 @@ public class AppointmentController {
     @Autowired
     AppointmentService appointmentService;
 
+    @Autowired
+    private SecurityService securityService;
+
     @PostMapping("/addAppointment")
-    public ApiResponse<Appointment> addAppointment(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
+    public ApiResponse<Appointment> addAppointment(@RequestBody Appointment appointment) {
         ApiResponse<Appointment> response = new ApiResponse<>();
+        Long doctor_id = securityService.getCurrentDoctorId();
         Patient patient = appointmentService.getPatientById(appointment.getId());
         Doctor doctor = appointmentService.getDoctorById(doctor_id);
         if (patient == null)
@@ -53,7 +58,8 @@ public class AppointmentController {
     }
 
     @PostMapping("/getAppointment")
-    public ApiResponse<List<Map<String, Object>>> getAppointments(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
+    public ApiResponse<List<Map<String, Object>>> getAppointments(@RequestBody Appointment appointment) {
+        Long doctor_id = securityService.getCurrentDoctorId();
         List<Appointment> appointments = appointmentService.getAppointments(appointment.getDiagnosisDate(), doctor_id);
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -84,7 +90,8 @@ public class AppointmentController {
     }
 
     @PostMapping("/getConsultedAppointments")
-    public ApiResponse<List<Map<String, Object>>> getConsultedAppointments(@RequestBody Appointment appointment, @CookieValue(value = "id") Long doctor_id) {
+    public ApiResponse<List<Map<String, Object>>> getConsultedAppointments(@RequestBody Appointment appointment) {
+        Long doctor_id = securityService.getCurrentDoctorId();
         List<Appointment> appointments = appointmentService.getConsultedAppointments(appointment.getDiagnosisDate(), doctor_id);
         ApiResponse<List<Map<String, Object>>> response = new ApiResponse<>();
         List<Map<String, Object>> result = new ArrayList<>();
@@ -148,8 +155,9 @@ public class AppointmentController {
     }
 
     @PostMapping("getAppointmentPage")
-    public ResponseEntity<Map<String, Object>>getAppointmentsPage(@CookieValue(value = "id") Long doctor_id, @RequestBody PageRequ pageRequ)
+    public ResponseEntity<Map<String, Object>>getAppointmentsPage(@RequestBody PageRequ pageRequ)
     {
+        Long doctor_id = securityService.getCurrentDoctorId();
         Page<Appointment> appointments;
         if(pageRequ.getSearch().isEmpty()){
             appointments = appointmentService.findUpcomingAppointments(doctor_id, pageRequ);
@@ -203,8 +211,9 @@ public class AppointmentController {
     }
 
     @PostMapping("getConsultedAppointmentsPage")
-    public ResponseEntity<Map<String, Object>>getConsultedAppointmentsPage(@CookieValue(value = "id") Long doctor_id, @RequestBody PageRequ pageRequ)
+    public ResponseEntity<Map<String, Object>>getConsultedAppointmentsPage(@RequestBody PageRequ pageRequ)
     {
+        Long doctor_id = securityService.getCurrentDoctorId();
         Page<Appointment> appointments;
         if(pageRequ.getSearch().isEmpty()){
             appointments = appointmentService.findConsultedAppointments(doctor_id, pageRequ);
