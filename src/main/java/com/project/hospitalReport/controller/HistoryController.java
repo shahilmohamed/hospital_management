@@ -6,9 +6,13 @@ import com.project.hospitalReport.entity.Doctor;
 import com.project.hospitalReport.entity.MedicalHistory;
 import com.project.hospitalReport.entity.Patient;
 import com.project.hospitalReport.service.HistoryService;
+import com.project.hospitalReport.service.PdfService;
 import com.project.hospitalReport.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,6 +31,9 @@ public class HistoryController {
     @Autowired
     private SecurityService securityService;
 
+    @Autowired
+    private PdfService pdfService;
+
     @PostMapping("/addHistory")
     public ApiResponse<MedicalHistory> addMedicalHistory(@RequestBody MedicalHistoryRequest history) {
         Long doctor_id = securityService.getCurrentDoctorId();
@@ -37,8 +44,12 @@ public class HistoryController {
         if (doctor == null)
             return new ApiResponse<>(null, "No Doctor Found!!!", HttpStatus.NO_CONTENT.value());
         MedicalHistory h = historyService.addHistory(history, doctor);
-        if (h != null)
-            return new ApiResponse<>(null, "Medical History Added", HttpStatus.OK.value());
+        if (h != null) {
+            h.setPrescriptions(null);
+            h.setPatient(null);
+            h.setDoctor(null);
+            return new ApiResponse<>(h, "Medical History Added", HttpStatus.OK.value());
+        }
         else
             return new ApiResponse<>(null, "Can't Add Medical History!!!", HttpStatus.NO_CONTENT.value());
     }
@@ -69,6 +80,22 @@ public class HistoryController {
             response.setStatus(HttpStatus.NO_CONTENT.value());
             response.setMessage("No Medical History Found!!!");
             return response;
+        }
+    }
+
+    @GetMapping("/generatePrescriptionPdf/{historyId}")
+    public ResponseEntity<byte[]> generatePrescriptionPdf(@PathVariable Long historyId) {
+        try {
+            byte[] pdfBytes = pdfService.generatePrescriptionPdf(historyId);
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "prescription_" + historyId + ".pdf");
+            headers.setContentLength(pdfBytes.length);
+            
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

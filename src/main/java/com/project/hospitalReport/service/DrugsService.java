@@ -124,6 +124,12 @@ public class DrugsService {
     public String deleteDrug(DrugsStock stock) {
         DrugsStock drugsStock = drugsRepo.getById(stock.getId());
         try {
+            List<DrugLog> logs = drugsLogRepo.findByStock(stock);
+            for (DrugLog log : logs)
+            {
+                Long id = log.getId();
+                drugsLogRepo.deleteById(id);
+            }
             drugsRepo.deleteById(drugsStock.getId());
             return "Drug Deleted Successfully";
         } catch (EntityNotFoundException e) {
