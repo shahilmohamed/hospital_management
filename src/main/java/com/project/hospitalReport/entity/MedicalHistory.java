@@ -13,6 +13,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@NamedEntityGraph(
+    name = "MedicalHistory.withDetails",
+    attributeNodes = {
+        @NamedAttributeNode(value = "prescriptions", subgraph = "prescription.stocks"),
+        @NamedAttributeNode("patient"),
+        @NamedAttributeNode("doctor")
+    },
+    subgraphs = {
+        @NamedSubgraph(
+            name = "prescription.stocks",
+            attributeNodes = @NamedAttributeNode("stocks")
+        )
+    }
+)
 public class MedicalHistory {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

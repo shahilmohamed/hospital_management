@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,8 +80,10 @@ public class HistoryService {
         return historyRepo.searchMedicalHistory(doctor_id, patient_id);
     }
 
+    @Transactional
     public MedicalHistory getHistoryById(Long id) {
-        return historyRepo.getById(id);
+        Optional<MedicalHistory> history = historyRepo.findById(id);
+        return history.orElse(null);
     }
 
 }

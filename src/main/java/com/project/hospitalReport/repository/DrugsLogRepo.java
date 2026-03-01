@@ -9,10 +9,13 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface DrugsLogRepo extends JpaRepository<DrugLog, Long> {
     Page<DrugLog> findByStock(DrugsStock stock, Pageable pageable);
+
+    List<DrugLog> findByStock(DrugsStock stock);
 
     Page<DrugLog> findByStockAndUpdatedDateBetween(DrugsStock stock, LocalDate fromDate, LocalDate toDate, Pageable pageable);
 }
