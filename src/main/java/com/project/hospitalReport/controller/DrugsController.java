@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -263,6 +261,38 @@ public class DrugsController {
                 "total Count", 0,
                 "total Pages", 0
         ));
+    }
+
+    @PostMapping("/getDrugByIds")
+    public ResponseEntity<Map<String, Object>> getDrugByIds(@RequestBody PageRequ requ) {
+        List<DrugsStock> medicines = drugsService.getByIds(requ.getIds());
+        List<Map<String, Object>> medicineList = new ArrayList<>();
+        for (DrugsStock med : medicines) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", med.getId());
+            map.put("addedDate", med.getAddedDate());
+            map.put("mrp", med.getMrp());
+            map.put("name", med.getName());
+            map.put("perPieceRate", med.getPerPieceRate());
+            map.put("quantity", med.getQuantity());
+            map.put("updatedDate", med.getUpdatedDate());
+            medicineList.add(map);
+        }
+        if (medicineList.isEmpty()){
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Drugs Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("message", "Drugs Found");
+        response.put("totalCount", medicines.size());
+        response.put("data", medicineList);
+        return ResponseEntity.ok(response);
     }
 
 }
