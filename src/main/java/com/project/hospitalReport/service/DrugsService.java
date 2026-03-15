@@ -177,4 +177,42 @@ public class DrugsService {
         }
         return drugsLogRepo.findByStockAndUpdatedDateBetween(stock, fromDate, toDate, pageable);
     }
+
+    public List<DrugsStock> getByIds(List<Long> ids)
+    {
+        return drugsRepo.findAllById(ids);
+    }
+
+    public String updateDrugs(List<DrugsStock> stockList, List<Integer> soldQuantities) {
+        Doctor doctor = securityService.getCurrentDoctor();
+        if (stockList != null && stockList.size() == soldQuantities.size()) {
+            for (int i = 0; i < stockList.size(); i++) {
+                DrugsStock stock = stockList.get(i);
+                Integer soldQty = soldQuantities.get(i);
+                
+                Long originalQuantity = stock.getQuantity();
+                
+                Long newQuantity = originalQuantity - soldQty;
+                
+                stock.setQuantity(newQuantity);
+                stock.setUpdatedDate(LocalDate.now());
+                
+                DrugLog drugLog = new DrugLog();
+                drugLog.setDrugName(stock.getName());
+                drugLog.setSoldQuantity(soldQty.longValue());
+                drugLog.setAddedQuantity(0L);
+                drugLog.setAvailableQuantity(newQuantity);
+                drugLog.setUpdatedDate(LocalDate.now());
+                drugLog.setUpdatedTime(LocalTime.now());
+                drugLog.setStock(stock);
+                drugLog.setDoctor(doctor);
+                drugsLogRepo.save(drugLog);
+            }
+
+            drugsRepo.saveAll(stockList);
+            return "Drugs Updated Successfully!!!";
+        }
+        return "No Drugs Found or Invalid Data!!?";
+    }
+
 }
