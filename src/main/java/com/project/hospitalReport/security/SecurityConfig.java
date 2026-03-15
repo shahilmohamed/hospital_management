@@ -46,7 +46,7 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/patients/**", "/doctors/**","/appointment/**","/d/**", "/history/**", "/drugs/**", "/prescription/**")
+                        .requestMatchers("/patients/**", "/doctors/**","/appointment/**","/d/**", "/history/**", "/drugs/**", "/prescription/**", "/invoice/**")
                         .authenticated()).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
