@@ -19,4 +19,5 @@ public class PageRequ {
     private LocalDate fromDate;
     private LocalDate toDate;
     private List<Long> ids;
+    private  List<String> names;
 }

@@ -295,4 +295,53 @@ public class DrugsController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/getDrugByNames")
+    public ResponseEntity<Map<String, Object>> getDrugByNames(@RequestBody PageRequ requ) {
+        List<DrugsStock> medicines = drugsService.findAllByNames(requ.getNames());
+        List<Map<String, Object>> medicineList = new ArrayList<>();
+        for (DrugsStock med : medicines) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", med.getId());
+            map.put("addedDate", med.getAddedDate());
+            map.put("mrp", med.getMrp());
+            map.put("name", med.getName());
+            map.put("perPieceRate", med.getPerPieceRate());
+            map.put("quantity", med.getQuantity());
+            map.put("updatedDate", med.getUpdatedDate());
+            medicineList.add(map);
+        }
+        if (medicineList.isEmpty()){
+            return ResponseEntity.ok(Map.of(
+                    "status", HttpStatus.NO_CONTENT.value(),
+                    "message", "No Drugs Found!!!",
+                    "data", Collections.emptyList(),
+                    "total Count", 0,
+                    "total Pages", 0
+            ));
+        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.OK.value());
+        response.put("message", "Drugs Found");
+        response.put("totalCount", medicines.size());
+        response.put("data", medicineList);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/addDrugs")
+    public ApiResponse<List<DrugsStock>> addDrugs(@RequestBody List<DrugsStock> stock) {
+        return drugsService.addDrugsAndLogs(stock);
+    }
+
+    @PutMapping("/updateDrugs")
+    public ApiResponse<String> updateDrugs(@RequestBody List<DrugsStock> stock) {
+        String result = drugsService.updateBulkDrugs(stock);
+        if (!result.equals("Drug Updated Successfully!!!")) {
+            ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.NO_CONTENT.value());
+            return response;
+        } else {
+            ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.OK.value());
+            return response;
+        }
+    }
+
 }
