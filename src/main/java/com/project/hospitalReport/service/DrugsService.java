@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +35,10 @@ public class DrugsService {
 
     public DrugsStock addDrug(DrugsStock stock) {
         return drugsRepo.save(stock);
+    }
+
+    public List<DrugsStock> addDrugs(List<DrugsStock> stocks){
+        return drugsRepo.saveAll(stocks);
     }
 
     public DrugLog addLog(DrugLog log) {
@@ -82,6 +88,14 @@ public class DrugsService {
 
     public Optional<DrugsStock> findByName(DrugsStock stock) {
         return drugsRepo.findByName(stock.getName());
+    }
+
+    public List<DrugsStock> findByNameIn(List<DrugsStock> drugsStockList){
+        List<String> names = new ArrayList<>();
+        for(DrugsStock d : drugsStockList){
+            names.add(d.getName());
+        }
+        return drugsRepo.findByNameIn(names);
     }
 
     public String updateDrug(DrugsStock updatedStock) {
@@ -201,6 +215,100 @@ public class DrugsService {
                 drugLog.setDrugName(stock.getName());
                 drugLog.setSoldQuantity(soldQty.longValue());
                 drugLog.setAddedQuantity(0L);
+                drugLog.setAvailableQuantity(newQuantity);
+                drugLog.setUpdatedDate(LocalDate.now());
+                drugLog.setUpdatedTime(LocalTime.now());
+                drugLog.setStock(stock);
+                drugLog.setDoctor(doctor);
+                drugsLogRepo.save(drugLog);
+            }
+
+            drugsRepo.saveAll(stockList);
+            return "Drugs Updated Successfully!!!";
+        }
+        return "No Drugs Found or Invalid Data!!?";
+    }
+
+    public List<DrugsStock> findAllByNames(List<String> drugsStocks)
+    {
+        Iterator<String> iterator = drugsStocks.iterator();
+        List<String> drugsNames = new ArrayList<>();
+        while (iterator.hasNext()){
+            drugsNames.add(iterator.next());
+        }
+        return drugsRepo.findByNameIn(drugsNames);
+    }
+
+    public ApiResponse<List<DrugsStock>> addDrugsAndLogs(List<DrugsStock> stocks)
+    {
+        Doctor doctor = securityService.getCurrentDoctor();
+        List<DrugsStock> drugs = findByNameIn(stocks);
+        if (drugs.isEmpty()) {
+            try {
+                ApiResponse<List<DrugsStock>> response = new ApiResponse<>();
+                List<DrugsStock> d = new ArrayList<>();
+                for (DrugsStock stock : stocks)
+                {
+                    DrugsStock stk = new DrugsStock();
+                    stk.setAddedDate(stock.getAddedDate());
+                    stk.setMrp(stock.getMrp());
+                    stk.setName(stock.getName());
+                    stk.setPerPieceRate(stock.getPerPieceRate());
+                    stk.setQuantity(stock.getQuantity());
+                    stk.setUpdatedDate(LocalDate.now());
+                    d.add(stk);
+                }
+
+                List<DrugsStock> savedStocks = addDrugs(d);
+
+                for (DrugsStock savedStock : savedStocks)
+                {
+                    DrugLog dl = new DrugLog();
+                    dl.setDrugName(savedStock.getName());
+                    dl.setAddedQuantity(savedStock.getQuantity());
+                    dl.setAvailableQuantity(savedStock.getQuantity());
+                    dl.setSoldQuantity(0L);
+                    dl.setUpdatedDate(LocalDate.now());
+                    dl.setUpdatedTime(LocalTime.now());
+                    dl.setStock(savedStock);
+                    dl.setDoctor(doctor);
+                    drugsLogRepo.save(dl);
+                }
+
+                response.setStatus(HttpStatus.OK.value());
+                response.setMessage("Drugs Added Successfully");
+                response.setData(null);
+                return response;
+            } catch (Exception e) {
+                return new ApiResponse<>(null, e.toString(), HttpStatus.NO_CONTENT.value());
+            }
+        } else {
+            return new ApiResponse<>(null, "Drug Already Present", HttpStatus.NO_CONTENT.value());
+        }
+    }
+
+    public String updateBulkDrugs(List<DrugsStock> stockList) {
+        Doctor doctor = securityService.getCurrentDoctor();
+        if (stockList != null) {
+            for (int i = 0; i < stockList.size(); i++) {
+                DrugsStock stock = stockList.get(i);
+                Long originalQuantity = stock.getQuantity();
+                Long newQuantity = stockList.get(i).getQuantity();
+                Long addedQty = 0L;
+                Long soldQty = 0L;
+                if (originalQuantity>newQuantity){
+                    soldQty = originalQuantity - newQuantity;
+                } else if (newQuantity>originalQuantity) {
+                    addedQty = newQuantity - originalQuantity;
+                }
+
+                stock.setQuantity(newQuantity);
+                stock.setUpdatedDate(LocalDate.now());
+
+                DrugLog drugLog = new DrugLog();
+                drugLog.setDrugName(stock.getName());
+                drugLog.setSoldQuantity(soldQty.longValue());
+                drugLog.setAddedQuantity(addedQty);
                 drugLog.setAvailableQuantity(newQuantity);
                 drugLog.setUpdatedDate(LocalDate.now());
                 drugLog.setUpdatedTime(LocalTime.now());
