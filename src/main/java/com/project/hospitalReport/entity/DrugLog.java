@@ -18,6 +18,7 @@ public class DrugLog {
     private Long addedQuantity;
     private Long soldQuantity;
     private Long availableQuantity;
+    private String action;
     @ManyToOne
     private DrugsStock stock;
     @ManyToOne
@@ -93,5 +94,13 @@ public class DrugLog {
 
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }
