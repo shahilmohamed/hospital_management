@@ -3,8 +3,10 @@ package com.project.hospitalReport;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 @EntityScan(basePackages = {"com.project.hospitalReport.entity", "com.security.jwt"})
 public class HospitalReportApplication {
 	public static void main(String[] args) {

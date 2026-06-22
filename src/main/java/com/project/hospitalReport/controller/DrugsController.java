@@ -4,6 +4,8 @@ import com.project.hospitalReport.dto.ApiResponse;
 import com.project.hospitalReport.dto.PageRequ;
 import com.project.hospitalReport.entity.DrugLog;
 import com.project.hospitalReport.entity.DrugsStock;
+import com.project.hospitalReport.document.DrugLogHistory;
+import com.project.hospitalReport.service.DrugLogMongoService;
 import com.project.hospitalReport.service.DrugsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,9 @@ public class DrugsController {
 
     @Autowired
     DrugsService drugsService;
+
+    @Autowired
+    DrugLogMongoService drugLogMongoService;
 
     @PostMapping("/addDrug")
     public ApiResponse<DrugsStock> addDrugs(@RequestBody DrugsStock stock) {
@@ -200,6 +205,7 @@ public class DrugsController {
                     map.put("soldQuantity", log.getSoldQuantity());
                     map.put("availableQuantity", log.getAvailableQuantity());
                     map.put("stock", log.getStock().getId());
+                    map.put("action", log.getAction());
                     map.put("modifiedBy", log.getDoctor().getFirstname()+ " "+log.getDoctor().getLastname());
                     return map;
                 })
@@ -342,6 +348,47 @@ public class DrugsController {
             ApiResponse<String> response = new ApiResponse<>(null, result, HttpStatus.OK.value());
             return response;
         }
+    }
+
+    @PostMapping("/drugLogHistory")
+    public ResponseEntity<Map<String, Object>> getDrugLogFromMongo(@RequestBody PageRequ pageRequ)
+    {
+        Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize(), Sort.by(Sort.Direction.DESC, "mysqlLogId"));
+        Page<DrugLogHistory> logs = drugLogMongoService.getLogByStockId(pageRequ.getId(), pageable);
+        List<Map<String, Object>> logList = logs.getContent().stream()
+                .map(log -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", log.getId());
+                    map.put("mysqlLogId", log.getMysqlLogId());
+                    map.put("updatedDate", log.getUpdatedDate());
+                    map.put("drugName", log.getDrugName());
+                    map.put("updatedTime", log.getUpdatedTime());
+                    map.put("addedQuantity", log.getAddedQuantity());
+                    map.put("soldQuantity", log.getSoldQuantity());
+                    map.put("availableQuantity", log.getAvailableQuantity());
+                    map.put("stock", log.getStockId());
+                    map.put("modifiedBy", log.getModifiedBy());
+                    map.put("action", log.getAction());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        if (logList.size() > 0) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("message", "Drugs Found");
+            response.put("totalPage", logs.getTotalPages());
+            response.put("totalCount", logs.getTotalElements());
+            response.put("data", logList);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.ok(Map.of(
+                "status", HttpStatus.NO_CONTENT.value(),
+                "message", "No Drugs Found!!!",
+                "data", Collections.emptyList(),
+                "total Count", 0,
+                "total Pages", 0
+        ));
     }
 
 }

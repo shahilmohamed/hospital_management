@@ -250,7 +250,7 @@ public class PatientController {
             patients = patientService.getPatientByDoctorIdPage(doctor_id, pageRequ);
         }
         else {
-            patients = patientService.findPatientByDoctorIdAndName(doctor_id, pageRequ);
+            patients = patientService.findPatientByDoctorIdAndNameAndContactNumber(doctor_id, pageRequ);
         }
 
         if (!patients.isEmpty())
