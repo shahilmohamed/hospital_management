@@ -1,6 +1,7 @@
 package com.project.hospitalReport.controller;
 
 import com.project.hospitalReport.dto.InvoiceRequest;
+import com.project.hospitalReport.dto.PageRequ;
 import com.project.hospitalReport.entity.DrugInvoice;
 import com.project.hospitalReport.entity.DrugsStock;
 import com.project.hospitalReport.entity.InvoiceItems;
@@ -8,15 +9,15 @@ import com.project.hospitalReport.service.DrugInvoiceService;
 import com.project.hospitalReport.service.DrugsService;
 import com.project.hospitalReport.service.InvoiceItemsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", methods = {RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE}, allowCredentials = "true")
@@ -51,6 +52,13 @@ public class InvoiceController {
             {
                 Integer qty = itemQts.get(i);
                 Double perPieceRate = stockList.get(i).getPerPieceRate();
+                if(stockList.get(i).getQuantity()<qty)
+                {
+                    return ResponseEntity.ok(Map.of(
+                            "status", HttpStatus.OK.value(),
+                            "message", stockList.get(i).getName().toUpperCase() +" Stock Quantity Exceeded!!! Actual Quantity is: " + stockList.get(i).getQuantity()
+                    ));
+                }
                 Double totPrice = perPieceRate * qty;
                 totalPrice += totPrice;
             }
@@ -99,5 +107,50 @@ public class InvoiceController {
                     "message", e.getStackTrace()
             ));
         }
+    }
+
+    @PostMapping("/getAllInvoices")
+    public ResponseEntity<?> getAllInvoices(@RequestBody PageRequ pageRequ){
+        Page<DrugInvoice> invoiceList = drugInvoiceService.getAllInvoice(pageRequ);
+        List<Map<String, Object>> invoiceWithItemsMap = invoiceList.getContent().stream()
+                .map(i ->{
+                    List<InvoiceItems> items = i.getInvoiceItems();
+                    List<Map<String, Object>> invoiceItems = new ArrayList<>();
+                    for (InvoiceItems item : items) {
+                        Map<String, Object> map = new HashMap<>();
+                        DrugsStock drugsStock = item.getStock();
+                        map.put("id", drugsStock.getId());
+                        map.put("name", drugsStock.getName());
+                        map.put("qty", item.getQty());
+                        map.put("totalPrice", item.getTotalPrice());
+                        invoiceItems.add(map);
+                    }
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("id", i.getId());
+                    map.put("billerName", i.getBillerName());
+                    map.put("patientName", i.getPatientName());
+                    map.put("invoiceDate", i.getInvoiceDate());
+                    map.put("invoiceAmount", i.getInvoiceAmount());
+                    map.put("invoiceItems", invoiceItems);
+                    map.put("invoiceTime", i.getInvoiceTime());
+                    return map;
+                })
+                .collect(Collectors.toList());
+        if (invoiceWithItemsMap.size()>0){
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", HttpStatus.OK.value());
+            response.put("message", "Invoice Found");
+            response.put("totalPage", invoiceList.getTotalPages());
+            response.put("totalCount", invoiceList.getTotalElements());
+            response.put("data", invoiceWithItemsMap);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.ok(Map.of(
+                "status", HttpStatus.NO_CONTENT.value(),
+                "message", "No Invoice Found!!!",
+                "data", Collections.emptyList(),
+                "total Count", 0,
+                "total Pages", 0
+        ));
     }
 }

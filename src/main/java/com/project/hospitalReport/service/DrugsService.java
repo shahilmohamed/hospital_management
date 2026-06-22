@@ -33,6 +33,9 @@ public class DrugsService {
     @Autowired
     SecurityService securityService;
 
+    @Autowired
+    DrugLogMongoService drugLogMongoService;
+
     public DrugsStock addDrug(DrugsStock stock) {
         return drugsRepo.save(stock);
     }
@@ -44,6 +47,7 @@ public class DrugsService {
     public DrugLog addLog(DrugLog log) {
         Doctor doctor = securityService.getCurrentDoctor();
         log.setDoctor(doctor);
+        drugLogMongoService.saveHistory(log);
         return drugsLogRepo.save(log);
     }
 
@@ -72,6 +76,7 @@ public class DrugsService {
                 dl.setUpdatedTime(LocalTime.now());
                 dl.setStock(d);
                 dl.setDoctor(null);
+                dl.setAction("ADDED");
                 addLog(dl);
 
                 response.setStatus(HttpStatus.OK.value());
@@ -126,7 +131,11 @@ public class DrugsService {
 
             drugLog.setStock(actualStock);
             drugLog.setDoctor(doctor);
+            drugLog.setAction("UPDATE");
             drugsLogRepo.save(drugLog);
+
+            // Save update history in MongoDB
+            drugLogMongoService.saveUpdateHistory(drugLog, doctor, actualStock.getId());
 
             actualStock.setQuantity(updatedStock.getQuantity());
             drugsRepo.save(actualStock);
@@ -220,7 +229,11 @@ public class DrugsService {
                 drugLog.setUpdatedTime(LocalTime.now());
                 drugLog.setStock(stock);
                 drugLog.setDoctor(doctor);
+                drugLog.setAction("SOLD");
                 drugsLogRepo.save(drugLog);
+
+                // Save update history in MongoDB
+                drugLogMongoService.saveUpdateHistory(drugLog, doctor, stock.getId());
             }
 
             drugsRepo.saveAll(stockList);
@@ -314,6 +327,7 @@ public class DrugsService {
                 drugLog.setUpdatedTime(LocalTime.now());
                 drugLog.setStock(stock);
                 drugLog.setDoctor(doctor);
+                drugLog.setAction("UPDATE");
                 drugsLogRepo.save(drugLog);
             }
 

@@ -27,34 +27,50 @@ public interface PatientRepo extends JpaRepository<Patient, Long> {
     @Query(value = "INSERT INTO patient_doctor (patient_id, doctor_id) VALUES (:patientId, :doctorId)", nativeQuery = true)
     int insertPatientDoctor(@Param("patientId") Long patientId, @Param("doctorId") Long doctorId);
 
-    @Query(value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob FROM patient_doctor pd JOIN patient p ON p.id = pd.patient_id WHERE pd.doctor_id= :doctorId", nativeQuery = true)
-    List<Patient> findPatientByDoctorId(@Param("doctorId") Long doctorId);
+//    @Query(value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob FROM patient_doctor pd JOIN patient p ON p.id = pd.patient_id WHERE pd.doctor_id= :doctorId", nativeQuery = true)
+//    List<Patient> findPatientByDoctorId(@Param("doctorId") Long doctorId);
 
-    @Query(value = "SELECT p.id, p.firstname, p.lastname, p.dob, p.contactNumber, p.address, p.bloodGroup, p.gender " +
-            "FROM patient p " +
-            "LEFT JOIN patient_doctor pd ON p.id = pd.patient_id " +
-            "WHERE (p.contactNumber = :contactNumber OR p.id = :id) " +
-            "AND pd.doctor_id= :userId;", nativeQuery = true)
-    List<Patient> searchPatient(@Param("userId") Long doctorId, @Param("contactNumber") String contactNumber, @Param("id") Long id);
+    List<Patient> findByDoctorsId(Long doctorId);
 
-    @Query(value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob FROM patient_doctor pd JOIN patient p ON p.id = pd.patient_id WHERE pd.doctor_id= :doctorId", nativeQuery = true)
-    Page<Patient> findPatientByDoctorIdPage(@Param("doctorId") Long doctorId, Pageable pageable);
+//    @Query(value = "SELECT p.id, p.firstname, p.lastname, p.dob, p.contactNumber, p.address, p.bloodGroup, p.gender " +
+//            "FROM patient p " +
+//            "LEFT JOIN patient_doctor pd ON p.id = pd.patient_id " +
+//            "WHERE (p.contactNumber = :contactNumber OR p.id = :id) " +
+//            "AND pd.doctor_id= :userId;", nativeQuery = true)
+//    List<Patient> searchPatient(@Param("userId") Long doctorId, @Param("contactNumber") String contactNumber, @Param("id") Long id);
 
-    @Query(
-            value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob " +
-                    "FROM patient_doctor pd " +
-                    "JOIN patient p ON p.id = pd.patient_id " +
-                    "WHERE pd.doctor_id = :doctorId " +
-                    "AND (LOWER(p.firstname) LIKE LOWER(CONCAT('%', :search, '%')) " +
-                    "     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :search, '%')))",
-            countQuery = "SELECT COUNT(*) " +
-                    "FROM patient_doctor pd " +
-                    "JOIN patient p ON p.id = pd.patient_id " +
-                    "WHERE pd.doctor_id = :doctorId " +
-                    "AND (LOWER(p.firstname) LIKE LOWER(CONCAT('%', :search, '%')) " +
-                    "     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :search, '%')))",
-            nativeQuery = true
-    )
-    Page<Patient> findPatientByDoctorIdAndName(Long doctorId, String search, Pageable pageable);
+    List<Patient> findByIdAndDoctorsIdOrContactNumberAndDoctorsId(Long id, Long doctorId, String contactNumber, Long doctorId2);
+
+//    @Query(value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob FROM patient_doctor pd JOIN patient p ON p.id = pd.patient_id WHERE pd.doctor_id= :doctorId", nativeQuery = true)
+//    Page<Patient> findPatientByDoctorIdPage(@Param("doctorId") Long doctorId, Pageable pageable);
+
+    Page<Patient> findByDoctorsId(Long doctorsId, Pageable pageable);
+//    @Query(
+//            value = "SELECT p.id, p.address, p.bloodGroup, p.contactNumber, p.firstname, p.gender, p.lastname, p.dob " +
+//                    "FROM patient_doctor pd " +
+//                    "JOIN patient p ON p.id = pd.patient_id " +
+//                    "WHERE pd.doctor_id = :doctorId " +
+//                    "AND (LOWER(p.firstname) LIKE LOWER(CONCAT('%', :search, '%')) " +
+//                    "     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :search, '%'))" +
+//                    "     OR LOWER(p.contactNumber) LIKE LOWER(CONCAT('%', :search, '%')))",
+//            countQuery = "SELECT COUNT(*) " +
+//                    "FROM patient_doctor pd " +
+//                    "JOIN patient p ON p.id = pd.patient_id " +
+//                    "WHERE pd.doctor_id = :doctorId " +
+//                    "AND (LOWER(p.firstname) LIKE LOWER(CONCAT('%', :search, '%')) " +
+//                    "     OR LOWER(p.lastname) LIKE LOWER(CONCAT('%', :search, '%'))" +
+//                    "     OR LOWER(p.contactNumber) LIKE LOWER(CONCAT('%', :search, '%')))",
+//            nativeQuery = true
+//    )
+//    Page<Patient> findPatientByDoctorIdAndNameAndContactNumber(Long doctorId, String search, Pageable pageable);
+
+    Page<Patient> findByDoctorsIdAndFirstnameContainingIgnoreCaseOrDoctorsIdAndLastnameContainingIgnoreCaseOrDoctorsIdAndContactNumberContainingIgnoreCase(
+            Long doctorId1,
+            String firstname,
+            Long doctorId2,
+            String lastname,
+            Long doctorId3,
+            String contactNumber,
+            Pageable pageable);
 
 }

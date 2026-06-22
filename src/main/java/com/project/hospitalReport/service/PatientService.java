@@ -51,12 +51,12 @@ public class PatientService {
 
     public List<Patient> getPatientByDoctorId(Long id)
     {
-        return patientRepo.findPatientByDoctorId(id);
+        return patientRepo.findByDoctorsId(id);
     }
 
     public List<Patient> searchPatient(Long doctorId, Patient patient)
     {
-        return patientRepo.searchPatient(doctorId, patient.getContactNumber(), patient.getId());
+        return patientRepo.findByIdAndDoctorsIdOrContactNumberAndDoctorsId(patient.getId(), doctorId, patient.getContactNumber(), doctorId);
     }
 
     public String upadatePatient(Patient request)
@@ -93,12 +93,12 @@ public class PatientService {
     public Page<Patient> getPatientByDoctorIdPage(Long id, PageRequ pageRequ)
     {
         Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
-        return patientRepo.findPatientByDoctorIdPage(id, pageable);
+        return patientRepo.findByDoctorsId(id, pageable);
     }
 
-    public  Page<Patient> findPatientByDoctorIdAndName(Long id, PageRequ pageRequ)
+    public  Page<Patient> findPatientByDoctorIdAndNameAndContactNumber(Long id, PageRequ pageRequ)
     {
         Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
-        return patientRepo.findPatientByDoctorIdAndName(id, pageRequ.getSearch(), pageable);
+        return patientRepo.findByDoctorsIdAndFirstnameContainingIgnoreCaseOrDoctorsIdAndLastnameContainingIgnoreCaseOrDoctorsIdAndContactNumberContainingIgnoreCase(id, pageRequ.getSearch(), id, pageRequ.getSearch(), id, pageRequ.getSearch(), pageable);
     }
 }
