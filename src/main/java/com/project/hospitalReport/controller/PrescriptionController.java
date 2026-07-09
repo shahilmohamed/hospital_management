@@ -40,6 +40,7 @@ public class PrescriptionController {
                 map.put("dosageMorning", p.getDosageMorning());
                 map.put("dosageAfternoon", p.getDosageAfternoon());
                 map.put("dosageNight", p.getDosageNight());
+                map.put("drugId", p.getStocks().getId());
                 result.add(map);
             }
             response.setStatus(HttpStatus.OK.value());
