@@ -47,7 +47,7 @@ public class DrugInvoiceService {
             }
 
         }
-        invoiceNumber = prefix + String.format("%02d", nextSequence);
+        invoiceNumber = prefix + "IN" + String.format("%02d", nextSequence);
         return invoiceNumber;
     }
 
