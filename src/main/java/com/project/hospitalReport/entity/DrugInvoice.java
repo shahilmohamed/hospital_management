@@ -16,6 +16,7 @@ public class DrugInvoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String invoiceNumber;
     private Double invoiceAmount;
     private LocalDate invoiceDate;
     private LocalTime invoiceTime;
