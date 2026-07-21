@@ -25,7 +25,7 @@ public class DrugInvoiceService {
 
     public Page<DrugInvoice> getAllInvoice(PageRequ pageRequ){
         Pageable pageable = PageRequest.of(pageRequ.getPage(), pageRequ.getSize());
-        return drugInvoiceRepo.findAll(pageable);
+        return drugInvoiceRepo.findAllByOrderByIdDesc(pageable);
     }
 
     public String generateInvoiceNumber(){
