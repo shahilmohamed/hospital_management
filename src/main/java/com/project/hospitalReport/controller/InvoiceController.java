@@ -133,6 +133,7 @@ public class InvoiceController {
                     map.put("invoiceAmount", i.getInvoiceAmount());
                     map.put("invoiceItems", invoiceItems);
                     map.put("invoiceTime", i.getInvoiceTime());
+                    map.put("invoiceNumber",i.getInvoiceNumber());
                     return map;
                 })
                 .collect(Collectors.toList());
