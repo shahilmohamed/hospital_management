@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSpecificationExecutor<Appointment> {
@@ -20,4 +21,6 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
     Page<Appointment> findByDiagnosisDateAndDoctorIdAndIsConsultedTrue(LocalDate diagnosisDate, Long doctorId, Pageable pageable);
 
     Page<Appointment> findByDiagnosisDateAndDoctorIdAndIsConsultedFalse(LocalDate diagnosisDate, Long doctorId, Pageable pageable);
+
+    Optional<Appointment> findTopByOrderByIdDesc();
 }
