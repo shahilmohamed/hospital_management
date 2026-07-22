@@ -38,7 +38,7 @@ public class DrugInvoiceService {
         if (lastInvoice.isPresent()){
             String lastInvoiceNumber = lastInvoice.get().getInvoiceNumber();
             if (lastInvoiceNumber != null && lastInvoiceNumber.startsWith(prefix)){
-                String currentSequence = lastInvoiceNumber.substring(prefix.length());
+                String currentSequence = lastInvoiceNumber.substring(prefix.length()+2);
                 try {
                     nextSequence = Integer.parseInt(currentSequence) + 1;
                 } catch (NumberFormatException e) {
