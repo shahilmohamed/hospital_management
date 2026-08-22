@@ -16,7 +16,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AppointmentService {
@@ -35,6 +37,7 @@ public class AppointmentService {
     }
 
     public Appointment addAppointment(Appointment appointment) {
+        appointment.setAppointmentId(generateAppointmentNumber());
         return appointmentRepo.save(appointment);
     }
 
@@ -91,5 +94,28 @@ public class AppointmentService {
         Specification<Appointment> spec = AppointmentSpecifications.findByDiagnosisDateDoctorIdAndIsConsultedTrueAndNameContaining(
                 pageRequ.getDate(), doctorId, pageRequ.getSearch());
         return appointmentRepo.findAll(spec, pageable);
+    }
+
+    public String generateAppointmentNumber(){
+        String appointmentNumber = "";
+        Optional<Appointment> lastAppointment = appointmentRepo.findTopByOrderByIdDesc();
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("ddMMyy");
+        String prefix = format.format(today);
+        Integer nextSequence = 1;
+        if (lastAppointment.isPresent()) {
+            String lastAppointmentNumber = lastAppointment.get().getAppointmentId();
+            if (lastAppointmentNumber != null && lastAppointmentNumber.startsWith(prefix)) {
+                appointmentNumber = lastAppointmentNumber.substring(prefix.length()+2);
+                try {
+                    nextSequence = Integer.parseInt(appointmentNumber)+1;
+                }
+                catch (NumberFormatException e) {
+                    nextSequence = 1;
+                }
+            }
+        }
+        appointmentNumber = prefix +"AP" + String.format("%02d", nextSequence);
+        return appointmentNumber;
     }
 }

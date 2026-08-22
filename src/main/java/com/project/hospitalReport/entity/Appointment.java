@@ -16,6 +16,7 @@ public class Appointment {
     private String diagnosis;
     private LocalDate diagnosisDate;
     private Boolean isConsulted;
+    private String appointmentId;
     @ManyToOne
     private Patient patient;
     @ManyToOne
@@ -91,5 +92,13 @@ public class Appointment {
 
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
+    }
+
+    public String getAppointmentId() {
+        return appointmentId;
+    }
+
+    public void setAppointmentId(String appointmentId) {
+        this.appointmentId = appointmentId;
     }
 }

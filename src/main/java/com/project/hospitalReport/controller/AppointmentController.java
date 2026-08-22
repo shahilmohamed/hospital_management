@@ -179,6 +179,7 @@ public class AppointmentController {
                         map.put("lastname", a.getLastname());
                         map.put("doctor_id", a.getDoctor().getId());
                         map.put("patient_id", a.getPatient().getId());
+                        map.put("appointmentId", a.getAppointmentId());
                         return map;
                     })
                     .collect(Collectors.toList());

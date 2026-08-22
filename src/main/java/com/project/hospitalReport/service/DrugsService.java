@@ -47,8 +47,10 @@ public class DrugsService {
     public DrugLog addLog(DrugLog log) {
         Doctor doctor = securityService.getCurrentDoctor();
         log.setDoctor(doctor);
-        drugLogMongoService.saveHistory(log);
-        return drugsLogRepo.save(log);
+        DrugLog drugLog =drugsLogRepo.save(log);
+        Long logId = drugLog.getId();
+        drugLogMongoService.saveHistory(log, logId);
+        return drugLog;
     }
 
     public ApiResponse<DrugsStock> addDrugAndLog(DrugsStock stock)
