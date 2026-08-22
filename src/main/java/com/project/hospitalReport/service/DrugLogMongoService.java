@@ -43,7 +43,7 @@ public class DrugLogMongoService {
         drugLogHistoryRepository.save(history);
     }
 
-    public void saveHistory(DrugLog drugLog){
+    public void saveHistory(DrugLog drugLog, Long mysqlLogId){
         DrugLogHistory history = new DrugLogHistory();
         history.setMysqlLogId(drugLog.getId());
         history.setStockId(drugLog.getStock().getId());
@@ -54,6 +54,7 @@ public class DrugLogMongoService {
         history.setUpdatedDate(drugLog.getUpdatedDate());
         history.setUpdatedTime(drugLog.getUpdatedTime());
         history.setAction(drugLog.getAction());
+        history.setDoctorId(mysqlLogId);
         Doctor doctor = drugLog.getDoctor();
         if (doctor != null) {
             history.setDoctorId(doctor.getId());
